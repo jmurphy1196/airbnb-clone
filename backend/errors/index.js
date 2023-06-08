@@ -1,10 +1,23 @@
-class UnauthorizedError extends Error {
+class CustomError extends Error {
   constructor(msg, errors = {}, title = "") {
     super(msg);
     this.title = title !== "" ? title : msg;
-    this.status = 401;
     this.errors = errors;
   }
 }
 
-module.exports = { UnauthorizedError };
+class UnauthorizedError extends CustomError {
+  constructor(msg, errors = {}, title = "") {
+    super(msg);
+    this.status = 401;
+  }
+}
+
+class BadReqestError extends CustomError {
+  constructor(msg, errors = {}, title = "") {
+    super(msg, errors, title);
+    this.status = 400;
+  }
+}
+
+module.exports = { UnauthorizedError, BadReqestError };

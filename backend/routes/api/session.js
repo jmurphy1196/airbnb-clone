@@ -1,10 +1,23 @@
 const router = require("express").Router();
+const { check } = require("express-validator");
+const { handleValidationErrors } = require("../../util/validation");
 const { Op } = require("sequelize");
 const bcrypt = require("bcryptjs");
 
 const { setTokenCookie, restoreUser } = require("../../util/auth");
 const { User } = require("../../db/models");
 const { UnauthorizedError } = require("../../errors");
+
+const validateLogin = [
+  check("credential")
+    .exists({ checkFalsy: true })
+    .notEmpty()
+    .withMessage("Please provide a valid username or email"),
+  check("password")
+    .exists({ checkFalsy: true })
+    .withMessage("Please provide a password"),
+  handleValidationErrors,
+];
 
 router.get("/", (req, res) => {
   const { user } = req;
@@ -19,7 +32,7 @@ router.get("/", (req, res) => {
   return res.json({ user: null });
 });
 
-router.post("/", async (req, res, next) => {
+router.post("/", validateLogin, async (req, res, next) => {
   const { credential, password } = req.body;
   const user = await User.unscoped().findOne({
     where: {
