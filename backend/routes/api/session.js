@@ -6,6 +6,19 @@ const { setTokenCookie, restoreUser } = require("../../util/auth");
 const { User } = require("../../db/models");
 const { UnauthorizedError } = require("../../errors");
 
+router.get("/", (req, res) => {
+  const { user } = req;
+  if (user) {
+    const safeUser = {
+      id: user.id,
+      email: user.email,
+      username: user.username,
+    };
+    return res.json({ user: safeUser });
+  }
+  return res.json({ user: null });
+});
+
 router.post("/", async (req, res, next) => {
   const { credential, password } = req.body;
   const user = await User.unscoped().findOne({
