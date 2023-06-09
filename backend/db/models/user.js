@@ -62,6 +62,7 @@ module.exports = (sequelize, DataTypes) => {
           exclude: ["email", "hashedPassword", "createdAt", "updatedAt"],
         },
       },
+      tableName: "Users",
     }
   );
   return User;
