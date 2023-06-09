@@ -16,7 +16,7 @@ module.exports = {
      */
 
     await queryInterface.addColumn(
-      "Users",
+      { tableName: "Users", schema: process.env.SCHEMA },
       "firstName",
       {
         type: Sequelize.STRING(50),
@@ -25,7 +25,7 @@ module.exports = {
       options
     );
     await queryInterface.addColumn(
-      "Users",
+      { tableName: "Users", schema: process.env.SCHEMA },
       "lastName",
       {
         type: Sequelize.STRING(50),
