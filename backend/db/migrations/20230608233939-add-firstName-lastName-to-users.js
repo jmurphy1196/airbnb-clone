@@ -7,7 +7,9 @@ if (process.env.NODE_ENV === "production") {
   options.schema = process.env.SCHEMA; // define your schema in options object
 }
 const tableName =
-  process.env.SCHEMA === "production" ? `${process.env.SCHEMA}.Users` : "Users";
+  process.env.NODE_ENV === "production"
+    ? `${process.env.SCHEMA}.Users`
+    : "Users";
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     /**
