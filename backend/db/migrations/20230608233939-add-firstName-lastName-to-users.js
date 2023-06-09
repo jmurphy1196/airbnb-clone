@@ -5,6 +5,7 @@ const { User } = require("../models");
 let options = {};
 if (process.env.NODE_ENV === "production") {
   options.schema = process.env.SCHEMA; // define your schema in options object
+  options.tableName = "Users";
 }
 module.exports = {
   up: async (queryInterface, Sequelize) => {
@@ -15,24 +16,15 @@ module.exports = {
      * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
      */
 
-    await queryInterface.addColumn(
-      { tableName: "Users", schema: process.env.SCHEMA },
-      "firstName",
-      {
-        type: Sequelize.STRING(50),
-        allowNull: false,
-      },
-      options
-    );
-    await queryInterface.addColumn(
-      { tableName: "Users", schema: process.env.SCHEMA },
-      "lastName",
-      {
-        type: Sequelize.STRING(50),
-        allowNull: false,
-      },
-      options
-    );
+    await queryInterface.addColumn(options, "firstName", {
+      type: Sequelize.STRING(50),
+      allowNull: false,
+    });
+
+    await queryInterface.addColumn(options, "lastName", {
+      type: Sequelize.STRING(50),
+      allowNull: false,
+    });
   },
 
   async down(queryInterface, Sequelize) {
