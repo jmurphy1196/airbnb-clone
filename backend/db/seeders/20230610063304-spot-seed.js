@@ -2,6 +2,10 @@
 
 const { Spot } = require("../models");
 const { Op } = require("sequelize");
+const {
+  getLocationData,
+  getlatitudeAndLongitude,
+} = require("../../util/geocoder");
 
 /** @type {import('sequelize-cli').Migration} */
 let options = { validate: true };
@@ -16,8 +20,6 @@ const spots = [
     city: "malibu",
     country: "USA",
     state: "CA",
-    lat: 12,
-    lng: 12,
     name: "Carbon Beach",
     description: "test",
     price: 7500,
@@ -29,8 +31,6 @@ const spots = [
     city: "Huntington Beach",
     country: "USA",
     state: "CA",
-    lat: 12,
-    lng: 12,
     name: "The Sands - Luxury family friendly beachfront home",
     description: "test",
     price: 7500,
@@ -42,8 +42,6 @@ const spots = [
     city: "avalon",
     country: "USA",
     state: "CA",
-    lat: 12,
-    lng: 12,
     name: "The Big Blue, 1BR + Den",
     description: "test",
     price: 500,
@@ -55,8 +53,6 @@ const spots = [
     city: "Oxnard",
     country: "USA",
     state: "CA",
-    lat: 12,
-    lng: 12,
     name: "On the sand",
     description: "test",
     price: 800,
@@ -74,6 +70,12 @@ module.exports = {
      *   isBetaMember: false
      * }], {});
      */
+    for (let spot of spots) {
+      const data = await getLocationData(spot);
+      const [lat, lng] = getlatitudeAndLongitude(data);
+      spot.lat = lat;
+      spot.lng = lng;
+    }
     await Spot.bulkCreate(spots, options);
   },
 
