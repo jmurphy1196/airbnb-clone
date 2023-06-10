@@ -1,6 +1,7 @@
 "use strict";
 
 const { Spot } = require("../models");
+const { Op } = require("sequelize");
 
 /** @type {import('sequelize-cli').Migration} */
 let options = { validate: true };
@@ -87,7 +88,9 @@ module.exports = {
     await queryInterface.bulkDelete(
       options,
       {
-        ownerId: 1,
+        ownerId: {
+          [Op.in]: [1, 2],
+        },
       },
       options
     );
