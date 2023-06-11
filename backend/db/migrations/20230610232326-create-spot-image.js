@@ -3,12 +3,12 @@
 let options = {};
 if (process.env.NODE_ENV === "production") {
   options.schema = process.env.SCHEMA; // define your schema in options object
-  options.tableName = "Users";
+  options.tableName = "SpotImages";
 }
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable(
-      "Spots",
+      "SpotImages",
       {
         id: {
           allowNull: false,
@@ -16,49 +16,22 @@ module.exports = {
           primaryKey: true,
           type: Sequelize.INTEGER,
         },
-        ownerId: {
+        spotId: {
           type: Sequelize.INTEGER,
           allowNull: false,
+          references: {
+            model: "Spots",
+            key: "id",
+          },
         },
-        address: {
+        url: {
           type: Sequelize.STRING,
           allowNull: false,
         },
-        city: {
-          type: Sequelize.STRING,
+        preview: {
+          type: Sequelize.BOOLEAN,
           allowNull: false,
-        },
-        state: {
-          type: Sequelize.STRING,
-          allowNull: false,
-        },
-        country: {
-          type: Sequelize.STRING,
-          allowNull: false,
-        },
-        lat: {
-          type: Sequelize.DECIMAL,
-          allowNull: false,
-        },
-        lng: {
-          type: Sequelize.DECIMAL,
-          allowNull: false,
-        },
-        name: {
-          type: Sequelize.STRING,
-          allowNull: false,
-        },
-        description: {
-          type: Sequelize.TEXT,
-          allowNull: false,
-        },
-        price: {
-          type: Sequelize.DECIMAL,
-          allowNull: false,
-        },
-        postalCode: {
-          type: Sequelize.STRING,
-          allowNull: false,
+          defaultValue: false,
         },
         createdAt: {
           allowNull: false,
