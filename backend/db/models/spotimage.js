@@ -22,6 +22,7 @@ module.exports = (sequelize, DataTypes) => {
           model: Spot,
           key: "id",
         },
+        onDelete: "CASCADE",
       },
       url: {
         type: DataTypes.STRING,
