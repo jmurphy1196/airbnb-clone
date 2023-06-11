@@ -1,6 +1,6 @@
 "use strict";
 
-const { Spot } = require("../models");
+const { Spot, User } = require("../models");
 const { Op } = require("sequelize");
 const {
   getLocationData,
@@ -15,7 +15,6 @@ if (process.env.NODE_ENV === "production") {
 
 const spots = [
   {
-    ownerId: 1,
     address: "42001 PACIFIC COAST HWY",
     city: "malibu",
     country: "USA",
@@ -26,7 +25,6 @@ const spots = [
     postalCode: "90265",
   },
   {
-    ownerId: 1,
     address: "20801 QUEENS PARK LN",
     city: "Huntington Beach",
     country: "USA",
@@ -37,7 +35,6 @@ const spots = [
     postalCode: "92646",
   },
   {
-    ownerId: 2,
     address: "127 VIEUDELOU AVE",
     city: "avalon",
     country: "USA",
@@ -48,7 +45,6 @@ const spots = [
     postalCode: "90704",
   },
   {
-    ownerId: 2,
     address: "303 DORIS AVE",
     city: "Oxnard",
     country: "USA",
@@ -76,7 +72,19 @@ module.exports = {
       spot.lat = lat;
       spot.lng = lng;
     }
-    await Spot.bulkCreate(spots, options);
+
+    const users = await User.findAll({
+      where: {
+        username: {
+          [Op.in]: ["Demo-lition", "FakeUser1", "FakeUser2", "porkins96"],
+        },
+      },
+    });
+    users.forEach(async (usr, i) => {
+      await usr.createSpot({
+        ...spots[i],
+      });
+    });
   },
 
   async down(queryInterface, Sequelize) {
@@ -87,11 +95,19 @@ module.exports = {
      * await queryInterface.bulkDelete('People', null, {});
      */
     options.tableName = "Spots";
+    const users = await User.findAll({
+      where: {
+        username: {
+          [Op.in]: ["Demo-lition", "FakeUser1", "FakeUser2", "porkins96"],
+        },
+      },
+    });
+    const userIds = users.map((usr) => usr.id);
     await queryInterface.bulkDelete(
       options,
       {
         ownerId: {
-          [Op.in]: [1, 2],
+          [Op.in]: userIds,
         },
       },
       options
