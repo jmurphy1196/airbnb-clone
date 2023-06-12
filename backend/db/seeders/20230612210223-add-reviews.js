@@ -10,22 +10,24 @@ if (process.env.NODE_ENV === "production") {
 }
 const reviewData = [
   {
-    review: "THIS IS A TEST REVIEW 1",
+    review: "Lorem ipsum dolor sit amet, at orci dapibus.",
     stars: 4,
     id: 1,
   },
   {
-    review: "THIS IS A TEST REVIEW 2",
+    review: "Lorem ipsum dolor sit amet, consectetur adip rutrdapibus.",
     stars: 1,
     id: 2,
   },
   {
-    review: "THIS IS A TEST REVIEW 3",
+    review:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing  al at orci dapibus.",
     stars: 2,
     id: 3,
   },
   {
-    review: "THIS IS A TEST REVIEW 4",
+    review:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla ruidunt rutrum fringilla. Vestibulum ultricies nunc ac purus aliquam lacinia. Donec auctor rutrum gravida. Donec at orci dapibus.",
     stars: 3,
     id: 4,
   },
