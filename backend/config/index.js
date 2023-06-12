@@ -10,4 +10,8 @@ module.exports = {
     apiKey: process.env.API_KEY,
     appId: process.env.APP_ID,
   },
+  s3: {
+    accessKey: process.env.ACCESS_KEY,
+    secretAccessKey: process.env.SECRET_ACCESS_KEY,
+  },
 };
