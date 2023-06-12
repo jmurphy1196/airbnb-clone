@@ -76,7 +76,7 @@ module.exports = {
     const users = await User.findAll({
       where: {
         username: {
-          [Op.in]: ["Demo-lition", "FakeUser1", "FakeUser2", "porkins96"],
+          [Op.in]: ["Demo-lition", "FakeUser1", "FakeUser2", "porkins1196"],
         },
       },
     });
@@ -98,7 +98,7 @@ module.exports = {
     const users = await User.findAll({
       where: {
         username: {
-          [Op.in]: ["Demo-lition", "FakeUser1", "FakeUser2", "porkins96"],
+          [Op.in]: ["Demo-lition", "FakeUser1", "FakeUser2", "porkins1196"],
         },
       },
     });
