@@ -42,7 +42,6 @@ router.get("/", async (req, res) => {
   const formattedSpots = [];
   for (let spot of spots) {
     const url = spot.SpotImages.length ? spot.SpotImages[0].url : null;
-    console.log("this is the url, ", url);
     const formattedSpot = {
       ...spot.dataValues,
       preview: url,
