@@ -44,6 +44,10 @@ router.get("/", async (req, res) => {
         attributes: ["url"],
         required: false,
       },
+      {
+        model: Review,
+        attributes: ["stars"],
+      },
     ],
   });
 
@@ -54,7 +58,15 @@ router.get("/", async (req, res) => {
       ...spot.dataValues,
       preview: url,
     };
+    const totalRating = formattedSpot.Reviews.reduce(
+      (acc, val) => val.stars + acc,
+      0
+    );
+    const avgRating =
+      totalRating <= 0 ? 0 : totalRating / formattedSpot.Reviews.length;
+    formattedSpot.avgRating = avgRating;
     delete formattedSpot.SpotImages;
+    delete formattedSpot.Reviews;
     formattedSpots.push(formattedSpot);
   }
   res.json({
