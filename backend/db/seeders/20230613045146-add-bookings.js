@@ -2,6 +2,7 @@
 
 /** @type {import('sequelize-cli').Migration} */
 const { User, Spot, Booking } = require("../models");
+const dayjs = require("dayjs");
 let options = {};
 if (process.env.NODE_ENV === "production") {
   options.schema = process.env.SCHEMA; // define your schema in options object
@@ -18,23 +19,18 @@ module.exports = {
      *   isBetaMember: false
      * }], {});
      */
+    const startDate = dayjs().add(2, "month").format("MM/DD/YYYY");
+    const endDate = dayjs(startDate).add(3, "day").format("MM/DD/YYYY");
     const user = await User.findOne({ where: { username: "porkins1196" } });
     const spot = await Spot.findOne({
       where: { address: "127 VIEUDELOU AVE" },
     });
 
-    const bookingDate = `${new Date().getFullYear()}-${
-      new Date().getMonth() + 2
-    }-${new Date().getDate()}`;
-    const bookingDateEnd = `${new Date().getFullYear()}-${
-      new Date().getMonth() + 2
-    }-${new Date().getDate() + 2}`;
-
     const booking = await Booking.create({
       spotId: spot.id,
       userId: user.id,
-      startDate: new Date("2023-10-13"),
-      endDate: new Date("2023-10-15"),
+      startDate,
+      endDate,
       id: 1,
     });
   },

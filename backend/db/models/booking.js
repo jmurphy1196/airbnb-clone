@@ -2,7 +2,6 @@
 const { Model } = require("sequelize");
 const { User } = require("./user");
 const { Spot } = require("./spot");
-const { formatDate } = require("../../util/date");
 module.exports = (sequelize, DataTypes) => {
   class Booking extends Model {
     /**
@@ -38,18 +37,34 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.DATE,
         allowNull: false,
         validate: {
-          isAfter: formatDate(new Date()),
-          isBefore: formatDate(
-            new Date(
-              `${new Date().getFullYear() + 1}-${new Date().getMonth() + 1}`
-            )
-          ),
+          isValidDate(val) {
+            const dayjs = require("dayjs");
+            const day = dayjs(val);
+            if (day.isBefore(dayjs().add(1, "day"))) {
+              throw new Error("Day must be at least 1 day after today");
+            }
+            if (day.isAfter(dayjs().add(1, "year"))) {
+              throw new Error("Cannot book more than a year out");
+            }
+          },
         },
       },
       endDate: {
         type: DataTypes.DATE,
         allowNull: false,
-        validate: {},
+        validate: {
+          isValidDate(val) {
+            const dayjs = require("dayjs");
+            const endDate = dayjs(val);
+            const startDate = dayjs(this.startDate);
+            if (endDate.isBefore(startDate)) {
+              throw new Error("End date cannot be before the start date");
+            }
+            if (endDate.isAfter(startDate.add(14, "day"))) {
+              throw new Error("Bookings cannot be longer than two weeks");
+            }
+          },
+        },
       },
     },
     {
