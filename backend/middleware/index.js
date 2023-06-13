@@ -2,8 +2,8 @@ const { check } = require("express-validator");
 const { handleValidationErrors } = require("../util/validation");
 const { restoreUser, requireAuth } = require("../util/auth");
 const { VALID_STATES } = require("../constants");
-const { Spot, SpotImage, User } = require("../db/models");
-const { sanitizeFile, s3Storage } = require("../util/s3");
+const { Spot, SpotImage, User, Review } = require("../db/models");
+const { sanitizeFile, s3Storage, s3ReviewStorage } = require("../util/s3");
 const multer = require("multer");
 const {
   NotFoundError,
@@ -78,6 +78,16 @@ const uploadImage = multer({
   },
 });
 
+const uploadReviewImage = multer({
+  storage: s3ReviewStorage,
+  fileFilter: (req, file, cb) => {
+    sanitizeFile(file, cb);
+  },
+  limits: {
+    fileSize: 1024 * 1024 * 2, //2mb file size
+  },
+});
+
 const canUploadMoreImages = async (req, res, next) => {
   const count = await req.spot.countSpotImages();
   if (count > 12)
@@ -89,6 +99,47 @@ const canUploadMoreImages = async (req, res, next) => {
   next();
 };
 
+const canUploadMoreReviewImages = async (req, res, next) => {
+  const count = await req.review.countReviewImages();
+  if (count > 5)
+    return next(
+      new BadReqestError("Too many images uploaded", {
+        image: "too many images uploaded for this review",
+      })
+    );
+  next();
+};
+
+const checkReviewExists = async (req, res, next) => {
+  const { reviewId } = req.params;
+  const review = await Review.findByPk(reviewId);
+  if (!review)
+    return next(new NotFoundError("Could not find requested review"));
+  req.review = review;
+  next();
+};
+
+const checkUserCanEditReview = (req, res, next) => {
+  if (!req.user)
+    return next(new UnauthorizedError("You must be logged in to edit reviews"));
+  if (!req.review) return next(new NotFoundError("Could not find req.review"));
+  if (req.user.id !== req.review.userId)
+    return next(new ForbiddenError("You do not have access to this review"));
+  next();
+};
+
+const checkReviewInputData = [
+  check("review")
+    .notEmpty()
+    .isLength({ min: 25, max: 300 })
+    .withMessage("Reviews must be between 25 and 300 characters"),
+  check("stars")
+    .notEmpty()
+    .isInt({ min: 1, max: 5 })
+    .withMessage("Stars must be between 1 and 5"),
+  handleValidationErrors,
+];
+
 module.exports = {
   validateEditSpots,
   requireUserLogin,
@@ -97,4 +148,9 @@ module.exports = {
   checkSpotInputData,
   uploadImage,
   canUploadMoreImages,
+  checkUserCanEditReview,
+  checkReviewExists,
+  checkReviewInputData,
+  uploadReviewImage,
+  canUploadMoreReviewImages,
 };

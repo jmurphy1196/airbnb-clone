@@ -28,6 +28,23 @@ const s3Storage = multerS3({
     cb(null, fileName);
   },
 });
+const s3ReviewStorage = multerS3({
+  s3,
+  bucket: "airbnb-clone-2",
+  metadata: (req, file, cb) => {
+    cb(null, { fieldName: file.fieldname });
+  },
+  key: (req, file, cb) => {
+    const fileName =
+      "reviewImages/" +
+      req.user.id +
+      `/${req.params.reviewId}/` +
+      Date.now() +
+      "_" +
+      file.originalname;
+    cb(null, fileName);
+  },
+});
 
 function sanitizeFile(file, cb) {
   // Define the allowed extension
@@ -49,4 +66,4 @@ function sanitizeFile(file, cb) {
   }
 }
 
-module.exports = { s3, s3Storage, sanitizeFile };
+module.exports = { s3, s3Storage, sanitizeFile, s3ReviewStorage };
