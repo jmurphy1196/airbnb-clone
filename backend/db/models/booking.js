@@ -11,6 +11,8 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Booking.belongsTo(models.User, { foreignKey: "userId" });
+      Booking.belongsTo(models.Spot, { foreignKey: "spotId" });
     }
   }
   Booking.init(
@@ -19,13 +21,42 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-          model: "Spots",
+          model: Spot,
           key: "id",
         },
       },
-      userId: DataTypes.INTEGER,
-      startDate: DataTypes.DATE,
-      endDate: DataTypes.DATE,
+      userId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: User,
+          key: "id",
+        },
+      },
+      startDate: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        validate: {
+          isAfter: `${new Date().getFullYear()}-${
+            new Date().getMonth() + 1
+          }-${new Date().getDate()}`,
+          isBefore: `${new Date().getFullYear() + 1}-${
+            new Date().getMonth() + 1
+          }-${new Date().getDate()}`,
+        },
+      },
+      endDate: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        validate: {
+          isAfter: `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${
+            new Date().getDate() + 1
+          }`,
+          isBefore: `${new Date().getFullYear() + 1}-${
+            new Date().getMonth() + 1
+          }-${new Date().getDate()}`,
+        },
+      },
     },
     {
       sequelize,
