@@ -20,6 +20,7 @@ const {
   checkBookingInputData,
   notAlreadyBooked,
 } = require("../../middleware");
+const { Op } = require("sequelize");
 
 const { BadReqestError, NotFoundError } = require("../../errors");
 const {
@@ -90,6 +91,20 @@ router.get("/:spotId", checkSpotExists, async (req, res) => {
     SpotImages: images,
   });
 });
+router.get(
+  "/:spotId/bookings",
+  [requireUserLogin, checkSpotExists],
+  async (req, res) => {
+    const bookings = await req.spot.getBookings({
+      where: {
+        userId: {
+          [Op.not]: req.user.id,
+        },
+      },
+    });
+    res.json(bookings);
+  }
+);
 router.get("/:spotId/reviews", checkSpotExists, async (req, res) => {
   const reviews = await req.spot.getReviews({
     include: [

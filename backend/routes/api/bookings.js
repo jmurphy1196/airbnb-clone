@@ -9,7 +9,6 @@ const {
 const { Spot, SpotImage, Booking } = require("../../db/models");
 const dayjs = require("dayjs");
 const { BadReqestError, ForbiddenError } = require("../../errors");
-const { Op } = require("sequelize");
 
 router.get("/current", requireUserLogin, async (req, res) => {
   const bookings = await req.user.getBookings({
