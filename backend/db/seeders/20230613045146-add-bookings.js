@@ -33,8 +33,8 @@ module.exports = {
     const booking = await Booking.create({
       spotId: spot.id,
       userId: user.id,
-      startDate: new Date("2023-06-13"),
-      endDate: new Date("2023-06-14"),
+      startDate: new Date("2023-10-13"),
+      endDate: new Date("2023-10-15"),
       id: 1,
     });
   },
