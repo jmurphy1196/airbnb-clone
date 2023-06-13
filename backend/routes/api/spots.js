@@ -1,5 +1,11 @@
 const router = require("express").Router();
-const { Spot, SpotImage } = require("../../db/models");
+const {
+  Spot,
+  SpotImage,
+  User,
+  ReviewImage,
+  Review,
+} = require("../../db/models");
 const {
   validateEditSpots,
   checkSpotExists,
@@ -7,6 +13,9 @@ const {
   checkSpotInputData,
   uploadImage,
   canUploadMoreImages,
+  requireUserLogin,
+  checkReviewInputData,
+  checkUserAlreadyHasReview,
 } = require("../../middleware");
 
 const { BadReqestError, NotFoundError } = require("../../errors");
@@ -52,12 +61,35 @@ router.get("/", async (req, res) => {
     Spots: formattedSpots,
   });
 });
+router.get("/current", requireUserLogin, async (req, res) => {
+  const spots = await req.user.getSpots();
+  res.json({
+    Spots: [...spots],
+  });
+});
 
 router.get("/:spotId", checkSpotExists, async (req, res) => {
   const images = await req.spot.getSpotImages();
   res.json({
     ...req.spot.dataValues,
     SpotImages: images,
+  });
+});
+router.get("/:spotId/reviews", checkSpotExists, async (req, res) => {
+  const reviews = await req.spot.getReviews({
+    include: [
+      {
+        model: User,
+        attributes: ["id", "firstName", "lastName"],
+      },
+      {
+        model: ReviewImage,
+        attributes: ["id", "url"],
+      },
+    ],
+  });
+  res.json({
+    Reviews: [...reviews],
   });
 });
 
@@ -100,6 +132,30 @@ router.post(
     });
 
     res.json(spot);
+  }
+);
+
+//TODO Check if the user has had a booking for this spot to make a review
+
+router.post(
+  "/:spotId/reviews",
+  [
+    requireUserLogin,
+    checkSpotExists,
+    checkReviewInputData,
+    checkUserAlreadyHasReview,
+  ],
+  async (req, res) => {
+    const { review, stars } = req.body;
+
+    const userReview = await Review.create({
+      userId: req.user.id,
+      spotId: req.spot.id,
+      review,
+      stars,
+    });
+
+    res.json(userReview);
   }
 );
 

@@ -140,6 +140,19 @@ const checkReviewInputData = [
   handleValidationErrors,
 ];
 
+const checkUserAlreadyHasReview = async (req, res, next) => {
+  const reviews = await req.user.getReviews({
+    where: {
+      spotId: req.spot.id,
+    },
+  });
+  if (reviews.length)
+    return next(
+      new BadReqestError("A review already exists for this spot from you")
+    );
+  next();
+};
+
 module.exports = {
   validateEditSpots,
   requireUserLogin,
@@ -152,5 +165,6 @@ module.exports = {
   checkReviewExists,
   checkReviewInputData,
   uploadReviewImage,
+  checkUserAlreadyHasReview,
   canUploadMoreReviewImages,
 };
