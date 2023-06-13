@@ -29,14 +29,91 @@ const {
 } = require("../../util/geocoder");
 const { restoreUser, requireAuth } = require("../../util/auth");
 
-router.get("/", async (req, res) => {
-  let { page, size } = req.query;
+router.get("/", async (req, res, next) => {
+  let { page, size, minLat, maxLat, minLng, maxLng, minPrice, maxPrice } =
+    req.query;
   page = +page <= 0 || isNaN(+page) ? 1 : +page;
   size = +size <= 0 || isNaN(+size) ? 10 : +size;
   const pagination = {
     offset: (page - 1) * size,
     limit: size,
   };
+  //validate queries
+  minLat = +minLat;
+  maxLat = +maxLat;
+  minLng = +minLng;
+  maxLng = +maxLng;
+  minPrice = +minPrice;
+  maxPrice = +maxPrice;
+  const where = {};
+  const requestError = new BadReqestError("invalid request", {});
+  if (minLat) {
+    if (isNaN(minLat)) {
+      requestError.errors.minLat = "Invalid minLat";
+    } else {
+      where.lat = {
+        [Op.gte]: minLat,
+      };
+    }
+  }
+  if (maxLat) {
+    if (isNaN(maxLat)) {
+      requestError.errors.maxLat = "Invalid maxLat";
+    } else {
+      if (minLat) {
+        if (minLat > maxLat)
+          requestError.errors.minLat = "minLat is larger than maxLat";
+        where.lat = {
+          [Op.between]: [minLat, maxLat],
+        };
+      } else {
+        where.lat = {
+          [Op.lte]: maxLat,
+        };
+      }
+    }
+  }
+  if (minPrice) {
+    if (isNaN(minPrice)) {
+      requestError.errors.maxPrice = "Invalid maxPrice";
+    } else {
+      where.price = {
+        [Op.gte]: minPrice,
+      };
+    }
+  }
+  if (minLng) {
+    if (isNaN(minLng)) {
+      requestError.errors.minLnk = "Invalid minLng";
+    } else {
+      where.lng = {
+        [Op.gte]: minLng,
+      };
+    }
+  }
+  if (maxLng) {
+    if (isNaN(maxLng)) {
+      requestError.errors.maxLng = "Invalid maxLng";
+    } else {
+      if (minLng) {
+        if (minLng > maxLng)
+          requestError.errors.minLng = "minLng is larger than max";
+        where.lng = {
+          [Op.between]: [minLng, maxLng],
+        };
+      } else {
+        where.lng = {
+          [Op.lte]: maxLng,
+        };
+      }
+    }
+  }
+
+  //check if errors exist
+  if (Object.keys(requestError.errors).length) {
+    return next(requestError);
+  }
+
   const spots = await Spot.findAll({
     ...pagination,
     include: [
@@ -53,6 +130,7 @@ router.get("/", async (req, res) => {
         attributes: ["stars"],
       },
     ],
+    where,
   });
 
   const formattedSpots = [];
