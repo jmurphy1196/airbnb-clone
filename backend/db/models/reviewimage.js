@@ -1,5 +1,6 @@
 "use strict";
 const { Model } = require("sequelize");
+const { Review } = require("./review");
 module.exports = (sequelize, DataTypes) => {
   class ReviewImage extends Model {
     /**
@@ -17,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
       reviewId: {
         type: DataTypes.INTEGER,
         references: {
-          model: "Reviews",
+          model: Review,
           key: "id",
         },
         allowNull: false,
