@@ -5,6 +5,7 @@ const {
   User,
   ReviewImage,
   Review,
+  Booking,
 } = require("../../db/models");
 const {
   validateEditSpots,
@@ -16,6 +17,8 @@ const {
   requireUserLogin,
   checkReviewInputData,
   checkUserAlreadyHasReview,
+  checkBookingInputData,
+  notAlreadyBooked,
 } = require("../../middleware");
 
 const { BadReqestError, NotFoundError } = require("../../errors");
@@ -144,6 +147,23 @@ router.post(
     });
 
     res.json(spot);
+  }
+);
+
+router.post(
+  "/:spotId/bookings",
+  requireUserLogin,
+  checkSpotExists,
+  checkBookingInputData,
+  notAlreadyBooked,
+  async (req, res) => {
+    const { startDate, endDate } = req.body;
+    const booking = await req.user.createBooking({
+      spotId: req.spot.id,
+      startDate,
+      endDate,
+    });
+    res.json(booking);
   }
 );
 

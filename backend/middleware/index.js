@@ -11,6 +11,7 @@ const {
   ForbiddenError,
   BadReqestError,
 } = require("../errors");
+const { Op } = require("sequelize");
 
 const checkSpotExists = async (req, res, next) => {
   const { spotId } = req.params;
@@ -183,6 +184,34 @@ const checkBookingInputData = [
   handleValidationErrors,
 ];
 
+const notAlreadyBooked = async (req, res, next) => {
+  const { startDate, endDate } = req.body;
+  const bookings = await Booking.findAll({
+    where: {
+      [Op.and]: [
+        {
+          startDate: {
+            [Op.lte]: new Date(startDate),
+          },
+        },
+        {
+          endDate: {
+            [Op.gte]: new Date(endDate),
+          },
+        },
+      ],
+    },
+  });
+  //if there are bookings in this timeframe
+  if (bookings.length)
+    return next(
+      new BadReqestError("Sorry, this spot is already booked for these dates", {
+        startDate: "starte date conflicts with an existing booking",
+        endDate: "End date conflicts with an existing booking",
+      })
+    );
+};
+
 module.exports = {
   validateEditSpots,
   requireUserLogin,
@@ -200,4 +229,5 @@ module.exports = {
   checkBookingExists,
   checkUserCanEditBooking,
   checkBookingInputData,
+  notAlreadyBooked,
 };
