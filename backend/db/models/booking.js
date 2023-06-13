@@ -2,6 +2,7 @@
 const { Model } = require("sequelize");
 const { User } = require("./user");
 const { Spot } = require("./spot");
+const { formatDate } = require("../../util/date");
 module.exports = (sequelize, DataTypes) => {
   class Booking extends Model {
     /**
@@ -37,25 +38,18 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.DATE,
         allowNull: false,
         validate: {
-          isAfter: `${new Date().getFullYear()}-${
-            new Date().getMonth() + 1
-          }-${new Date().getDate()}`,
-          isBefore: `${new Date().getFullYear() + 1}-${
-            new Date().getMonth() + 1
-          }-${new Date().getDate()}`,
+          isAfter: formatDate(new Date()),
+          isBefore: formatDate(
+            new Date(
+              `${new Date().getFullYear() + 1}-${new Date().getMonth() + 1}`
+            )
+          ),
         },
       },
       endDate: {
         type: DataTypes.DATE,
         allowNull: false,
-        validate: {
-          isAfter: `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${
-            new Date().getDate() + 1
-          }`,
-          isBefore: `${new Date().getFullYear() + 1}-${
-            new Date().getMonth() + 1
-          }-${new Date().getDate()}`,
-        },
+        validate: {},
       },
     },
     {
