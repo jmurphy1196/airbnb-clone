@@ -134,6 +134,9 @@ const checkBookingExists = async (req, res, next) => {
   const booking = await Booking.findByPk(bookingId);
   if (!booking) return next(new NotFoundError("Could not find booking"));
   req.booking = booking;
+  if (!req.spot) {
+    req.spot = await Spot.findByPk(req.booking.id);
+  }
   next();
 };
 const checkUserCanEditBooking = (req, res, next) => {
@@ -200,6 +203,7 @@ const notAlreadyBooked = async (req, res, next) => {
           },
         },
       ],
+      spotId: req.spot.id,
     },
   });
   //if there are bookings in this timeframe
