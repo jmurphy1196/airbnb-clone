@@ -2,7 +2,7 @@ const { check } = require("express-validator");
 const { handleValidationErrors } = require("../util/validation");
 const { restoreUser, requireAuth } = require("../util/auth");
 const { VALID_STATES } = require("../constants");
-const { Spot, SpotImage, User, Review } = require("../db/models");
+const { Spot, SpotImage, User, Review, Booking } = require("../db/models");
 const { sanitizeFile, s3Storage, s3ReviewStorage } = require("../util/s3");
 const multer = require("multer");
 const {
@@ -128,6 +128,24 @@ const checkUserCanEditReview = (req, res, next) => {
   next();
 };
 
+const checkBookingExists = async (req, res, next) => {
+  const { bookingId } = req.params;
+  const booking = await Booking.findByPk(bookingId);
+  if (!booking) return next(new NotFoundError("Could not find booking"));
+  req.booking = booking;
+  next();
+};
+const checkUserCanEditBooking = (req, res, next) => {
+  if (!req.user)
+    return next(
+      new UnauthorizedError("You must be logged in to edit a booking")
+    );
+  if (!req.booking) return next(new NotFoundError("Could not find booking"));
+  if (req.user.id !== req.booking.userId)
+    return next(new ForbiddenError("You do not have access to this review"));
+  next();
+};
+
 const checkReviewInputData = [
   check("review")
     .notEmpty()
@@ -153,6 +171,18 @@ const checkUserAlreadyHasReview = async (req, res, next) => {
   next();
 };
 
+const checkBookingInputData = [
+  check("startDate")
+    .notEmpty()
+    .isDate({ format: "MM/DD/YYYY" })
+    .withMessage("Please provide a startDate"),
+  check("endDate")
+    .notEmpty()
+    .isDate({ format: "MM/DD/YYYY" })
+    .withMessage("Please provide an end date"),
+  handleValidationErrors,
+];
+
 module.exports = {
   validateEditSpots,
   requireUserLogin,
@@ -167,4 +197,7 @@ module.exports = {
   uploadReviewImage,
   checkUserAlreadyHasReview,
   canUploadMoreReviewImages,
+  checkBookingExists,
+  checkUserCanEditBooking,
+  checkBookingInputData,
 };
