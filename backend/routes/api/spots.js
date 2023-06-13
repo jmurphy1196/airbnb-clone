@@ -95,14 +95,29 @@ router.get(
   "/:spotId/bookings",
   [requireUserLogin, checkSpotExists],
   async (req, res) => {
-    const bookings = await req.spot.getBookings({
-      where: {
-        userId: {
-          [Op.not]: req.user.id,
+    let bookings;
+    if (req.spot.ownerId === req.user.id) {
+      bookings = await Booking.findAll({
+        where: {
+          spotId: req.spot.id,
         },
-      },
+        include: [
+          {
+            model: User,
+          },
+        ],
+      });
+    } else {
+      bookings = await Booking.findAll({
+        where: {
+          spotId: req.spot.id,
+        },
+        attributes: ["spotId", "startDate", "endDate"],
+      });
+    }
+    res.json({
+      Bookings: [...bookings],
     });
-    res.json(bookings);
   }
 );
 router.get("/:spotId/reviews", checkSpotExists, async (req, res) => {

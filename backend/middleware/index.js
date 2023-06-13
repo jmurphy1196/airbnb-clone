@@ -210,6 +210,7 @@ const notAlreadyBooked = async (req, res, next) => {
         endDate: "End date conflicts with an existing booking",
       })
     );
+  next();
 };
 
 module.exports = {
