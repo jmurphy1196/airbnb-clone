@@ -1,4 +1,4 @@
-const { S3Client } = require("@aws-sdk/client-s3");
+const { S3Client, DeleteObjectCommand } = require("@aws-sdk/client-s3");
 const config = require("../config");
 const multer = require("multer");
 const multerS3 = require("multer-s3");
@@ -66,4 +66,16 @@ function sanitizeFile(file, cb) {
   }
 }
 
-module.exports = { s3, s3Storage, sanitizeFile, s3ReviewStorage };
+const deleteS3Obj = async (key) => {
+  const command = new DeleteObjectCommand({
+    Bucket: "airbnb-clone-2",
+    Key: key,
+  });
+  try {
+    const response = await s3.send(command);
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+module.exports = { s3, s3Storage, sanitizeFile, s3ReviewStorage, deleteS3Obj };

@@ -23,11 +23,15 @@ const {
 const { Op } = require("sequelize");
 
 const { BadReqestError, NotFoundError } = require("../../errors");
+
 const {
   getLocationData,
   getlatitudeAndLongitude,
-} = require("../../util/geocoder");
-const { restoreUser, requireAuth } = require("../../util/auth");
+  restoreUser,
+  requireAuth,
+  s3,
+} = require("../../util");
+const { deleteS3Obj } = require("../../util/s3");
 
 router.get("/", async (req, res, next) => {
   let { page, size, minLat, maxLat, minLng, maxLng, minPrice, maxPrice } =
@@ -383,6 +387,10 @@ router.delete(
           imageId: "image not found with given id",
         })
       );
+    const s3Key = spotImages[0].url.split("/").slice(3).join("/");
+    //delete from aws
+    await deleteS3Obj(s3Key);
+    //delete from DB
     await spotImages[0].destroy();
     res.json({ message: "Successfully deleted" });
   }

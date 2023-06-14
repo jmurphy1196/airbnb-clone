@@ -1,9 +1,6 @@
 const { check } = require("express-validator");
-const { handleValidationErrors } = require("../util/validation");
-const { restoreUser, requireAuth } = require("../util/auth");
 const { VALID_STATES } = require("../constants");
-const { Spot, SpotImage, User, Review, Booking } = require("../db/models");
-const { sanitizeFile, s3Storage, s3ReviewStorage } = require("../util/s3");
+const { Spot, Review, Booking } = require("../db/models");
 const multer = require("multer");
 const {
   NotFoundError,
@@ -13,6 +10,14 @@ const {
   CustomError,
 } = require("../errors");
 const { Op } = require("sequelize");
+const {
+  restoreUser,
+  requireAuth,
+  handleValidationErrors,
+  sanitizeFile,
+  s3Storage,
+  s3ReviewStorage,
+} = require("../util");
 
 const canEditResource = ([resource, fk], req, res, next) => {
   if (!req.user)

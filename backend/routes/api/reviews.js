@@ -9,6 +9,7 @@ const {
 } = require("../../middleware");
 const { User, Spot, ReviewImage } = require("../../db/models");
 const { BadReqestError } = require("../../errors");
+const { deleteS3Obj } = require("../../util/s3");
 
 router.get("/current", requireUserLogin, async (req, res) => {
   const reviews = await req.user.getReviews({
@@ -91,7 +92,10 @@ router.delete(
         id: req.params.reviewImageId,
       },
     });
-    //TODO DELETE IMG FROM AWS
+    const s3Key = image.url.split("/").slice(3).join("/");
+    //delete from AWS
+    await deleteS3Obj(s3Key);
+    //delete from DB
     await image.destroy();
     res.json({ message: "Successfully deleted" });
   }
