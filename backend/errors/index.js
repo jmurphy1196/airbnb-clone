@@ -39,4 +39,5 @@ module.exports = {
   BadReqestError,
   NotFoundError,
   ForbiddenError,
+  CustomError,
 };

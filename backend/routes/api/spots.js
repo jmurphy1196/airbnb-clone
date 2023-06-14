@@ -10,7 +10,7 @@ const {
 const {
   validateEditSpots,
   checkSpotExists,
-  userCanEditSpot,
+  checkUserCanEditSpot,
   checkSpotInputData,
   uploadImage,
   canUploadMoreImages,
@@ -358,7 +358,7 @@ router.put("/:spotId", validateEditSpots, async (req, res, next) => {
 router.delete(
   "/:spotId",
   checkSpotExists,
-  userCanEditSpot,
+  checkUserCanEditSpot,
   async (req, res, next) => {
     //TODO should not be able to delete if a booking is coming up and delete associated bookings
     await req.spot.destroy();
@@ -369,7 +369,7 @@ router.delete(
 router.delete(
   "/:spotId/images/:imageId",
   checkSpotExists,
-  userCanEditSpot,
+  checkUserCanEditSpot,
   async (req, res, next) => {
     const { imageId } = req.params;
     const spotImages = await req.spot.getSpotImages({
@@ -393,6 +393,7 @@ router.post(
   restoreUser,
   requireAuth,
   checkSpotExists,
+  checkUserCanEditSpot,
   canUploadMoreImages,
   uploadImage.single("image"),
   async (req, res, next) => {
@@ -416,6 +417,7 @@ router.post(
   restoreUser,
   requireAuth,
   checkSpotExists,
+  checkUserCanEditSpot,
   canUploadMoreImages,
   uploadImage.array("images[]"),
   async (req, res, next) => {

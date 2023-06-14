@@ -10,8 +10,17 @@ const {
   UnauthorizedError,
   ForbiddenError,
   BadReqestError,
+  CustomError,
 } = require("../errors");
 const { Op } = require("sequelize");
+
+const canEditResource = ([resource, fk], req, res, next) => {
+  if (!req.user)
+    return new UnauthorizedError(`You must be logged in to edit ${resource}s`);
+  if (!req[resource]) return new NotFoundError(`Could not find ${resource}`);
+  if (req.user.id !== req[resource][fk])
+    return new ForbiddenError(`You do not have access to this ${resource}`);
+};
 
 const checkSpotExists = async (req, res, next) => {
   const { spotId } = req.params;
@@ -22,16 +31,9 @@ const checkSpotExists = async (req, res, next) => {
   next();
 };
 
-const userCanEditSpot = async (req, res, next) => {
-  if (!req.spot) return next(new NotFoundError("Spot was not found"));
-  if (!req.user)
-    return next(new UnauthorizedError("must be logged in to edit a spot"));
-  if (req.user.id !== req.spot.ownerId)
-    return next(
-      new ForbiddenError(
-        "You do not have valid permissions to edit this resource"
-      )
-    );
+const checkUserCanEditSpot = async (req, res, next) => {
+  const result = canEditResource(["spot", "ownerId"], req, res, next);
+  if (result instanceof CustomError) return next(result);
   next();
 };
 
@@ -64,7 +66,7 @@ const validateEditSpots = [
   requireAuth,
   ...checkSpotInputData,
   checkSpotExists,
-  userCanEditSpot,
+  checkUserCanEditSpot,
 ];
 
 const requireUserLogin = [restoreUser, requireAuth];
@@ -121,11 +123,8 @@ const checkReviewExists = async (req, res, next) => {
 };
 
 const checkUserCanEditReview = (req, res, next) => {
-  if (!req.user)
-    return next(new UnauthorizedError("You must be logged in to edit reviews"));
-  if (!req.review) return next(new NotFoundError("Could not find req.review"));
-  if (req.user.id !== req.review.userId)
-    return next(new ForbiddenError("You do not have access to this review"));
+  const result = canEditResource(["review", "userId"], req, res);
+  if (result instanceof CustomError) return next(result);
   next();
 };
 
@@ -140,13 +139,8 @@ const checkBookingExists = async (req, res, next) => {
   next();
 };
 const checkUserCanEditBooking = (req, res, next) => {
-  if (!req.user)
-    return next(
-      new UnauthorizedError("You must be logged in to edit a booking")
-    );
-  if (!req.booking) return next(new NotFoundError("Could not find booking"));
-  if (req.user.id !== req.booking.userId)
-    return next(new ForbiddenError("You do not have access to this review"));
+  const result = canEditResource(["booking", "userId"], req, res, next);
+  if (result instanceof CustomError) return next(result);
   next();
 };
 
@@ -221,7 +215,7 @@ module.exports = {
   validateEditSpots,
   requireUserLogin,
   checkSpotExists,
-  userCanEditSpot,
+  checkUserCanEditSpot,
   checkSpotInputData,
   uploadImage,
   canUploadMoreImages,
