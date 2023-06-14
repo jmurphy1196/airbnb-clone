@@ -29,7 +29,6 @@ const {
   getlatitudeAndLongitude,
   restoreUser,
   requireAuth,
-  s3,
 } = require("../../util");
 const { deleteS3Obj } = require("../../util/s3");
 
