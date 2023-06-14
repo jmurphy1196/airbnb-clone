@@ -27,12 +27,17 @@ const canEditResource = ([resource, fk], req, res, next) => {
     return new ForbiddenError(`You do not have access to this ${resource}`);
 };
 
+const checkResourceExists = async (id, model, resourceName, req) => {
+  const data = await model.findByPk(id);
+  if (!data)
+    return new NotFoundError(`Could not find requested ${resourceName}`);
+  req[resourceName] = data;
+};
+
 const checkSpotExists = async (req, res, next) => {
   const { spotId } = req.params;
-  const spot = await Spot.findByPk(spotId);
-  if (!spot)
-    return next(new NotFoundError("Could not find requested resource"));
-  req.spot = spot;
+  const result = await checkResourceExists(spotId, Spot, "spot", req);
+  if (result instanceof CustomError) return next(result);
   next();
 };
 
@@ -120,10 +125,8 @@ const canUploadMoreReviewImages = async (req, res, next) => {
 
 const checkReviewExists = async (req, res, next) => {
   const { reviewId } = req.params;
-  const review = await Review.findByPk(reviewId);
-  if (!review)
-    return next(new NotFoundError("Could not find requested review"));
-  req.review = review;
+  const result = await checkResourceExists(reviewId, Review, "review", req);
+  if (result instanceof CustomError) return next(result);
   next();
 };
 
@@ -135,9 +138,8 @@ const checkUserCanEditReview = (req, res, next) => {
 
 const checkBookingExists = async (req, res, next) => {
   const { bookingId } = req.params;
-  const booking = await Booking.findByPk(bookingId);
-  if (!booking) return next(new NotFoundError("Could not find booking"));
-  req.booking = booking;
+  const result = await checkResourceExists(bookingId, Booking, "booking", req);
+  if (result instanceof CustomError) return next(result);
   if (!req.spot) {
     req.spot = await Spot.findByPk(req.booking.id);
   }
