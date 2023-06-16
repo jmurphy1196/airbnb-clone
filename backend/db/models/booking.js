@@ -43,9 +43,9 @@ module.exports = (sequelize, DataTypes) => {
             if (day.isBefore(dayjs())) {
               throw new Error("Cannot book before today");
             }
-            if (day.isAfter(dayjs().add(1, "year"))) {
-              throw new Error("Cannot book more than a year out");
-            }
+            // if (day.isAfter(dayjs().add(1, "year"))) {
+            //   throw new Error("Cannot book more than a year out");
+            // }
           },
         },
       },
