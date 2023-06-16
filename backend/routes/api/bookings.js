@@ -20,12 +20,14 @@ router.get("/current", requireUserLogin, async (req, res) => {
           where: {
             preview: true,
           },
+          required: false,
         },
       },
     ],
   });
   const formattedBookings = [];
   for (let booking of bookings) {
+    console.log("THIS IS THE BOOKING", booking);
     const formattedBooking = {
       ...booking.dataValues,
       Spot: { ...booking.Spot.dataValues },
