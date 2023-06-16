@@ -75,7 +75,7 @@ router.post(
       return next(new BadReqestError("Please provide a valid URL"));
     }
     const reviewImage = await ReviewImage.create({
-      url,
+      url: req.body.url,
       reviewId: req.review.id,
       userId: req.user.id,
     });
