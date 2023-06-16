@@ -50,14 +50,18 @@ const checkUserCanEditSpot = async (req, res, next) => {
 const checkSpotInputData = [
   check("address")
     .notEmpty()
-    .matches(/^\d+\s[A-z]+\s[A-z]+/g)
+    // .matches(/^\d+\s[A-z]+\s[A-z]+/g)
     .withMessage("Please provide a valid address"),
   check("city").notEmpty().withMessage("Please provide a city"),
-  check("state").isIn(VALID_STATES).withMessage("Please provide a valid state"),
+  check("state")
+    .notEmpty()
+    // isIn(VALID_STATES)
+    .withMessage("Please provide a valid state"),
   check("country")
     .notEmpty()
-    .equals("USA")
-    .withMessage("We only accept USA for now"),
+    // .equals("USA")
+    // .withMessage("We only accept USA for now"),
+    .withMessage("Please provide a valid country"),
   check("name").notEmpty().withMessage("Please enter a valid name"),
   check("description")
     .notEmpty()
@@ -154,8 +158,8 @@ const checkUserCanEditBooking = (req, res, next) => {
 const checkReviewInputData = [
   check("review")
     .notEmpty()
-    .isLength({ min: 25, max: 300 })
-    .withMessage("Reviews must be between 25 and 300 characters"),
+    .isLength({ min: 5, max: 300 })
+    .withMessage("Reviews must be between 5 and 300 characters"),
   check("stars")
     .notEmpty()
     .isInt({ min: 1, max: 5 })

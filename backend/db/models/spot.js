@@ -32,7 +32,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
-          is: /^\d+\s[A-z]+\s[A-z]+/g,
+          // is: /^\d+\s[A-z]+\s[A-z]+/g,
         },
       },
       city: {
@@ -43,14 +43,14 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
-          isIn: [VALID_STATES],
+          // isIn: [VALID_STATES],
         },
       },
       country: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
-          isIn: [["USA"]],
+          // isIn: [["USA"]],
         },
       },
       lat: {

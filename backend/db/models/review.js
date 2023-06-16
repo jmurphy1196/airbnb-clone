@@ -40,7 +40,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.TEXT,
         allowNull: false,
         validate: {
-          len: [25, 300],
+          len: [5, 300],
         },
       },
       stars: {
