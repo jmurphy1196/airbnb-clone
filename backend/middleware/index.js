@@ -183,11 +183,11 @@ const checkUserAlreadyHasReview = async (req, res, next) => {
 const checkBookingInputData = [
   check("startDate")
     .notEmpty()
-    .isDate({ format: "MM/DD/YYYY" })
+    .isDate({ format: "YYYY-MM-DD" })
     .withMessage("Please provide a startDate"),
   check("endDate")
     .notEmpty()
-    .isDate({ format: "MM/DD/YYYY" })
+    .isDate({ format: "YYYY-MM-DD" })
     .withMessage("Please provide an end date"),
   handleValidationErrors,
 ];

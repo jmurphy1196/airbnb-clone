@@ -40,8 +40,8 @@ module.exports = (sequelize, DataTypes) => {
           isValidDate(val) {
             const dayjs = require("dayjs");
             const day = dayjs(val);
-            if (day.isBefore(dayjs().add(1, "day"))) {
-              throw new Error("Day must be at least 1 day after today");
+            if (day.isBefore(dayjs())) {
+              throw new Error("Cannot book before today");
             }
             if (day.isAfter(dayjs().add(1, "year"))) {
               throw new Error("Cannot book more than a year out");
@@ -60,9 +60,9 @@ module.exports = (sequelize, DataTypes) => {
             if (endDate.isBefore(startDate)) {
               throw new Error("End date cannot be before the start date");
             }
-            if (endDate.isAfter(startDate.add(14, "day"))) {
-              throw new Error("Bookings cannot be longer than two weeks");
-            }
+            // if (endDate.isAfter(startDate.add(14, "day"))) {
+            //   throw new Error("Bookings cannot be longer than two weeks");
+            // }
           },
         },
       },
