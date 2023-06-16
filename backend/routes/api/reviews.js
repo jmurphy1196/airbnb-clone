@@ -68,11 +68,14 @@ router.post(
     uploadReviewImage.single("image"),
   ],
   async (req, res, next) => {
-    if (!req.file) {
-      return next(new BadReqestError("You must upload at least one image"));
+    // if (!req.file) {
+    //   return next(new BadReqestError("You must upload at least one image"));
+    // }
+    if (!req.body.url) {
+      return next(new BadReqestError("Please provide a valid URL"));
     }
     const reviewImage = await ReviewImage.create({
-      url: req.file.location,
+      url,
       reviewId: req.review.id,
       userId: req.user.id,
     });
@@ -92,9 +95,9 @@ router.delete(
         id: req.params.reviewImageId,
       },
     });
-    const s3Key = image.url.split("/").slice(3).join("/");
+    // const s3Key = image.url.split("/").slice(3).join("/");
     //delete from AWS
-    await deleteS3Obj(s3Key);
+    // await deleteS3Obj(s3Key);
     //delete from DB
     await image.destroy();
     res.json({ message: "Successfully deleted" });
