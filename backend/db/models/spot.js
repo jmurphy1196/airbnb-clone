@@ -88,13 +88,13 @@ module.exports = (sequelize, DataTypes) => {
           max: 99999,
         },
       },
-      postalCode: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        validate: {
-          is: /^\d{5}(-\d{4})?$/,
-        },
-      },
+      // postalCode: {
+      //   type: DataTypes.STRING,
+      //   allowNull: false,
+      //   validate: {
+      //     is: /^\d{5}(-\d{4})?$/,
+      //   },
+      // },
     },
     {
       sequelize,

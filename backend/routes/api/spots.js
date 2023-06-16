@@ -254,7 +254,7 @@ router.post(
       name,
       description,
       price,
-      postalCode,
+      // postalCode,
     });
 
     res.json(spot);
@@ -386,9 +386,9 @@ router.delete(
           imageId: "image not found with given id",
         })
       );
-    const s3Key = spotImages[0].url.split("/").slice(3).join("/");
+    // const s3Key = spotImages[0].url.split("/").slice(3).join("/");
     //delete from aws
-    await deleteS3Obj(s3Key);
+    // await deleteS3Obj(s3Key);
     //delete from DB
     await spotImages[0].destroy();
     res.json({ message: "Successfully deleted" });
@@ -397,20 +397,28 @@ router.delete(
 
 router.post(
   "/:spotId/images",
-  restoreUser,
   requireAuth,
   checkSpotExists,
   checkUserCanEditSpot,
   canUploadMoreImages,
   uploadImage.single("image"),
   async (req, res, next) => {
-    const { preview } = req.body;
-    if (!req.file) {
-      return next(new BadReqestError("Please upload an image"));
+    const { preview, url } = req.body;
+    if (preview !== true && preview !== false) {
+      return next(
+        new BadReqestError("Please provide a valid value for preview")
+      );
     }
+    // if (!req.file) {
+    //   return next(new BadReqestError("Please upload an image"));
+    // }
+    // const image = await req.spot.createSpotImage({
+    //   url: req.file.location,
+    //   preview: preview === "true" ? true : false,
+    // });
     const image = await req.spot.createSpotImage({
-      url: req.file.location,
-      preview: preview === "true" ? true : false,
+      url,
+      preview,
     });
     res.json({
       url: image.getDataValue("url"),
@@ -421,7 +429,6 @@ router.post(
 
 router.post(
   "/:spotId/images/array",
-  restoreUser,
   requireAuth,
   checkSpotExists,
   checkUserCanEditSpot,

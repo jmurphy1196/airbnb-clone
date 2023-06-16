@@ -65,10 +65,10 @@ const checkSpotInputData = [
   check("price")
     .isFloat({ min: 1, max: 99999 })
     .withMessage("Please enter a valid price"),
-  check("postalCode")
-    .notEmpty()
-    .matches(/^\d{5}(-\d{4})?$/)
-    .withMessage("Please provide a valid postal code"),
+  // check("postalCode")
+  //   .notEmpty()
+  //   .matches(/^\d{5}(-\d{4})?$/)
+  //   .withMessage("Please provide a valid postal code"),
   handleValidationErrors,
 ];
 const validateEditSpots = [

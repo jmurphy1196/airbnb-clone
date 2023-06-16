@@ -22,7 +22,7 @@ const spots = [
     name: "Carbon Beach",
     description: "test",
     price: 7500,
-    postalCode: "90265",
+    // postalCode: "90265",
   },
   {
     address: "20801 QUEENS PARK LN",
@@ -32,7 +32,7 @@ const spots = [
     name: "The Sands - Luxury family friendly beachfront home",
     description: "test",
     price: 7500,
-    postalCode: "92646",
+    // postalCode: "92646",
   },
   {
     address: "127 VIEUDELOU AVE",
@@ -42,7 +42,7 @@ const spots = [
     name: "The Big Blue, 1BR + Den",
     description: "test",
     price: 500,
-    postalCode: "90704",
+    // postalCode: "90704",
   },
   {
     address: "303 DORIS AVE",
@@ -52,7 +52,7 @@ const spots = [
     name: "On the sand",
     description: "test",
     price: 800,
-    postalCode: "93030",
+    // postalCode: "93030",
   },
 ];
 module.exports = {
