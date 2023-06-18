@@ -1,13 +1,12 @@
 const { check } = require("express-validator");
 const { VALID_STATES } = require("../constants");
-const { Spot, Review, Booking } = require("../db/models");
+const { Spot, Review, Booking, SpotImage } = require("../db/models");
 const multer = require("multer");
 const {
   NotFoundError,
   UnauthorizedError,
   ForbiddenError,
   BadReqestError,
-  CustomError,
 } = require("../errors");
 const { Op } = require("sequelize");
 const {
@@ -19,33 +18,37 @@ const {
   s3ReviewStorage,
 } = require("../util");
 
-const canEditResource = ([resource, fk], req, res, next) => {
-  if (!req.user)
-    return new UnauthorizedError(`You must be logged in to edit ${resource}s`);
-  if (!req[resource]) return new NotFoundError(`Could not find ${resource}`);
-  if (req.user.id !== req[resource][fk])
-    return new ForbiddenError(`You do not have access to this ${resource}`);
+const canEditResource = ([resource, fk]) => {
+  return (req, res, next) => {
+    if (!req.user)
+      return next(
+        new UnauthorizedError(`You must be logged in to edit ${resource}s`)
+      );
+    if (!req[resource])
+      return next(new NotFoundError(`Could not find ${resource}`));
+    if (req.user.id !== req[resource][fk])
+      return next(
+        new ForbiddenError(`You do not have access to this ${resource}`)
+      );
+    next();
+  };
 };
 
-const checkResourceExists = async (id, model, resourceName, req) => {
-  const data = await model.findByPk(id);
-  if (!data)
-    return new NotFoundError(`Could not find requested ${resourceName}`);
-  req[resourceName] = data;
+const checkResourceExists = (resourceId, model, resourceName) => {
+  return async (req, res, next) => {
+    const data = await model.findByPk(req.params[resourceId]);
+    if (!data)
+      return next(
+        new NotFoundError(`Could not find requested ${resourceName}`)
+      );
+    req[resourceName] = data;
+    next();
+  };
 };
 
-const checkSpotExists = async (req, res, next) => {
-  const { spotId } = req.params;
-  const result = await checkResourceExists(spotId, Spot, "spot", req);
-  if (result instanceof CustomError) return next(result);
-  next();
-};
+const checkSpotExists = checkResourceExists("spotId", Spot, "spot");
 
-const checkUserCanEditSpot = async (req, res, next) => {
-  const result = canEditResource(["spot", "ownerId"], req, res, next);
-  if (result instanceof CustomError) return next(result);
-  next();
-};
+const checkUserCanEditSpot = canEditResource(["spot", "ownerId"]);
 
 const checkSpotInputData = [
   check("address")
@@ -127,33 +130,12 @@ const canUploadMoreReviewImages = async (req, res, next) => {
   next();
 };
 
-const checkReviewExists = async (req, res, next) => {
-  const { reviewId } = req.params;
-  const result = await checkResourceExists(reviewId, Review, "review", req);
-  if (result instanceof CustomError) return next(result);
-  next();
-};
+const checkReviewExists = checkResourceExists("reviewId", Review, "review");
 
-const checkUserCanEditReview = (req, res, next) => {
-  const result = canEditResource(["review", "userId"], req, res);
-  if (result instanceof CustomError) return next(result);
-  next();
-};
+const checkUserCanEditReview = canEditResource(["review", "userId"]);
 
-const checkBookingExists = async (req, res, next) => {
-  const { bookingId } = req.params;
-  const result = await checkResourceExists(bookingId, Booking, "booking", req);
-  if (result instanceof CustomError) return next(result);
-  if (!req.spot) {
-    req.spot = await Spot.findByPk(req.booking.id);
-  }
-  next();
-};
-const checkUserCanEditBooking = (req, res, next) => {
-  const result = canEditResource(["booking", "userId"], req, res, next);
-  if (result instanceof CustomError) return next(result);
-  next();
-};
+const checkBookingExists = checkResourceExists("bookingId", Booking, "booking");
+const checkUserCanEditBooking = canEditResource(["booking", "userId"]);
 
 const checkReviewInputData = [
   check("review")
@@ -184,43 +166,52 @@ const checkBookingInputData = [
   check("startDate")
     .notEmpty()
     .isDate({ format: "YYYY-MM-DD" })
-    .withMessage("Please provide a startDate"),
+    .withMessage("Please provide a startDate format: YYYY-MM-DD"),
   check("endDate")
     .notEmpty()
     .isDate({ format: "YYYY-MM-DD" })
-    .withMessage("Please provide an end date"),
+    .withMessage("Please provide an end date format: YYYY-MM-DD"),
   handleValidationErrors,
 ];
 
 const notAlreadyBooked = async (req, res, next) => {
   const { startDate, endDate } = req.body;
-  const bookings = await Booking.findAll({
+  const bookings = await Booking.count({
     where: {
-      [Op.and]: [
+      [Op.or]: [
         {
           startDate: {
-            [Op.lte]: new Date(startDate),
+            [Op.between]: [new Date(startDate), new Date(endDate)],
           },
         },
         {
           endDate: {
-            [Op.gte]: new Date(endDate),
+            [Op.between]: [new Date(startDate), new Date(endDate)],
           },
         },
       ],
       spotId: req.booking ? req.booking.spotId : req.spot.id,
+      userId: {
+        [Op.not]: req.user.id,
+      },
     },
   });
   //if there are bookings in this timeframe
-  if (bookings.length)
+  if (bookings > 0)
     return next(
       new BadReqestError("Sorry, this spot is already booked for these dates", {
-        startDate: "starte date conflicts with an existing booking",
+        startDate: "start date conflicts with an existing booking",
         endDate: "End date conflicts with an existing booking",
       })
     );
   next();
 };
+
+const checkSpotImageExists = checkResourceExists(
+  "spotImageId",
+  SpotImage,
+  "spotImage"
+);
 
 module.exports = {
   validateEditSpots,
@@ -240,4 +231,5 @@ module.exports = {
   checkUserCanEditBooking,
   checkBookingInputData,
   notAlreadyBooked,
+  checkSpotImageExists,
 };

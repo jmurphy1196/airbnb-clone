@@ -159,17 +159,47 @@ router.get("/", async (req, res, next) => {
   });
 });
 router.get("/current", requireUserLogin, async (req, res) => {
-  const spots = await req.user.getSpots();
+  const spots = await req.user.getSpots({
+    include: [
+      {
+        model: SpotImage,
+        where: {
+          preview: true,
+        },
+        required: false,
+      },
+    ],
+  });
+  const formattedSpots = [];
+  for (const spot of spots) {
+    const formattedSpot = { ...spot.dataValues };
+    if (formattedSpot.SpotImages.length) {
+      formattedSpot.previewImage = formattedSpot.SpotImages[0].url;
+    } else {
+      formattedSpot.previewImage = null;
+    }
+    delete formattedSpot.SpotImages;
+    formattedSpots.push(formattedSpot);
+  }
   res.json({
-    Spots: [...spots],
+    Spots: formattedSpots,
   });
 });
 
 router.get("/:spotId", checkSpotExists, async (req, res) => {
   const images = await req.spot.getSpotImages();
+  const owner = await req.spot.getUser({
+    attributes: ["id", "firstName", "lastName"],
+  });
+  const reviews = await req.spot.getReviews();
+  let avgRating =
+    reviews.reduce((acc, val) => acc + val.stars, 0) / reviews.length || 0;
+
   res.json({
     ...req.spot.dataValues,
     SpotImages: images,
+    Owner: owner,
+    avgStarRating: avgRating,
   });
 });
 router.get(
