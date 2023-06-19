@@ -149,7 +149,7 @@ router.get("/", async (req, res, next) => {
     );
     const avgRating =
       totalRating <= 0 ? 0 : totalRating / formattedSpot.Reviews.length;
-    formattedSpot.avgRating = avgRating;
+    formattedSpot.avgRating = avgRating.toFixed(1);
     delete formattedSpot.SpotImages;
     delete formattedSpot.Reviews;
     formattedSpots.push(formattedSpot);
@@ -168,6 +168,11 @@ router.get("/current", requireUserLogin, async (req, res) => {
         },
         required: false,
       },
+      {
+        model: Review,
+        attributes: ["stars"],
+        required: false,
+      },
     ],
   });
   const formattedSpots = [];
@@ -178,7 +183,12 @@ router.get("/current", requireUserLogin, async (req, res) => {
     } else {
       formattedSpot.previewImage = null;
     }
+    const avgRating =
+      formattedSpot.Reviews.reduce((acc, val) => val.stars + acc, 0) /
+      formattedSpot.Reviews.length;
+    formattedSpot.avgRating = avgRating ? avgRating.toFixed(1) : 0;
     delete formattedSpot.SpotImages;
+    delete formattedSpot.Reviews;
     formattedSpots.push(formattedSpot);
   }
   res.json({
@@ -199,7 +209,7 @@ router.get("/:spotId", checkSpotExists, async (req, res) => {
     ...req.spot.dataValues,
     SpotImages: images,
     Owner: owner,
-    avgStarRating: avgRating,
+    avgStarRating: avgRating.toFixed(1),
   });
 });
 router.get(
