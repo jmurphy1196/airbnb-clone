@@ -463,6 +463,7 @@ router.post(
     res.json({
       url: image.getDataValue("url"),
       preview: image.getDataValue("preview"),
+      id: image.getDataValue("id"),
     });
   }
 );
