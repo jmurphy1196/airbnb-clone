@@ -191,9 +191,6 @@ const notAlreadyBooked = async (req, res, next) => {
         },
       ],
       spotId: req.booking ? req.booking.spotId : req.spot.id,
-      userId: {
-        [Op.not]: req.user.id,
-      },
     },
   });
   //if there are bookings in this timeframe
