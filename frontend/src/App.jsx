@@ -12,7 +12,7 @@ function App() {
   const user = useSelector((state) => state.session.user);
   useEffect(() => {
     (async () => {
-      // await dispatch(thunkGetSession());
+      await dispatch(thunkGetSession());
     })();
   }, [dispatch]);
   return (
