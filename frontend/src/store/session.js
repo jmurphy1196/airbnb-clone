@@ -29,6 +29,17 @@ export const thunkSetSession =
     }
   };
 
+export const thunkGetSession = () => async (dispatch) => {
+  try {
+    const res = await csrfFetch("/api/session");
+    const data = await res.json();
+    dispatch(setSession(data));
+    return data;
+  } catch (err) {
+    return err.json();
+  }
+};
+
 export const sessionReducer = (state = initalState, action) => {
   switch (action.type) {
     case actionTypes.SET_SESSION: {
