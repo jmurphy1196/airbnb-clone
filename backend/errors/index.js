@@ -9,7 +9,7 @@ class CustomError extends Error {
 
 class UnauthorizedError extends CustomError {
   constructor(msg, errors = {}, title = "") {
-    super(msg);
+    super(msg, errors, title);
     this.status = 401;
   }
 }
