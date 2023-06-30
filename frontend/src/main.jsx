@@ -5,10 +5,13 @@ import "./index.css";
 import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 import { configureStore } from "./store/index.js";
+import { csrfFetch, restoreCSRF } from "./store/csrf.js";
 
 const store = configureStore();
 
 if (process.env.NODE_ENV !== "production") {
+  restoreCSRF();
+  window.csrfFetch = csrfFetch;
   window.store = store;
 }
 
