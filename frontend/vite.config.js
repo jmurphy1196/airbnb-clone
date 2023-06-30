@@ -9,5 +9,4 @@ export default defineConfig({
       "/api": "http://localhost:8000",
     },
   },
-  base: `https://airbnb-clone-qs2c.onrender.com/frontend/dist`,
 });
