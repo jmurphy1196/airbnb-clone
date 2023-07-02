@@ -8,6 +8,7 @@ import Protected from "./Protected";
 import { Globalstyle } from "./GlobalStyle";
 import { ThemeProvider } from "styled-components";
 import { lightTheme, darkTheme } from "./theme";
+import Navigation from "./components/Navigation";
 
 function App() {
   const dispatch = useDispatch();
@@ -29,7 +30,7 @@ function App() {
         <Globalstyle />
         {!loading && (
           <>
-            <h1>hello world</h1>
+            <Navigation />
             <Switch>
               <Route exact path='/login'>
                 <LoginFormPage />

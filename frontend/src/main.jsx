@@ -5,6 +5,7 @@ import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 import { configureStore } from "./store/index.js";
 import { csrfFetch, restoreCSRF } from "./store/csrf.js";
+import "./fonts/AirbnbCereal_W_Blk.otf";
 
 const store = configureStore();
 
