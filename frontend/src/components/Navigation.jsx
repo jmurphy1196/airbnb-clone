@@ -17,10 +17,15 @@ const NavbarContainer = styled.nav`
     align-items: center;
   }
   .brand img {
-    height: 50%;
+    height: 50px;
   }
   .brand {
     gap: 10px;
+  }
+  .brand a {
+    display: flex;
+    gap: 10px;
+    align-items: center;
   }
   h1 {
     color: ${({ theme }) => theme.primary};
@@ -38,7 +43,7 @@ const NavbarContainer = styled.nav`
     border-radius: 1000px;
   }
   button:hover {
-    box-shadow: 2px 4px ${({ theme }) => theme.toggleBorder};
+    box-shadow: 2px 4px 5px ${({ theme }) => theme.toggleBorder};
   }
   .menu {
     position: relative;
@@ -51,7 +56,7 @@ const NavbarContainer = styled.nav`
   }
 
   .sub-active {
-    box-shadow: 2px 4px ${({ theme }) => theme.toggleBorder};
+    box-shadow: 2px 4px 5px ${({ theme }) => theme.toggleBorder};
   }
 
   .sub-menu {
@@ -89,11 +94,13 @@ export default function Navigation() {
   return (
     <NavbarContainer>
       <div className='brand'>
-        <img
-          src='https://companieslogo.com/img/orig/ABNB-4aaade0f.png?t=1633511992'
-          alt='airbnb logo'
-        />
-        <h1>airbnb</h1>
+        <Link to='/'>
+          <img
+            src='https://companieslogo.com/img/orig/ABNB-4aaade0f.png?t=1633511992'
+            alt='airbnb logo'
+          />
+          <h1>airbnb</h1>
+        </Link>
       </div>
       <div className='menu' onClick={() => setSubmenuAvtice(!submenuActive)}>
         <button className={`${submenuActive && "sub-active"}`}>
