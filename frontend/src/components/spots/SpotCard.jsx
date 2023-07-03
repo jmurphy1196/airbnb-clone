@@ -44,7 +44,7 @@ export const SpotCard = ({ spot }) => {
         <div className='preview'>
           <img
             src={`${
-              spot?.preview ||
+              spot.preview ||
               "https://www.shutterstock.com/image-vector/illustration-simple-house-isolated-on-260nw-1937900650.jpg"
             }`}
             alt='preivew image of spot'
