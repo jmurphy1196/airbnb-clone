@@ -43,10 +43,7 @@ export const SpotCard = ({ spot }) => {
       <SpotCardWrapper>
         <div className='preview'>
           <img
-            src={`${
-              spot.preview ||
-              "https://www.shutterstock.com/image-vector/illustration-simple-house-isolated-on-260nw-1937900650.jpg"
-            }`}
+            src={`${spot.preview != null ? spot.preview : "./stock-house.png"}`}
             alt='preivew image of spot'
           />
         </div>
