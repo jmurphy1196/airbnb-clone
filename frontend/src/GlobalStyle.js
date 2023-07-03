@@ -2,12 +2,6 @@ import { createGlobalStyle } from "styled-components";
 import { device } from "./theme";
 
 export const Globalstyle = createGlobalStyle`
-  @font-face {
-    font-family: 'Airbnb';
-    font-weight: bold;
-    src: local('Airbnb'),
-    url(@/fonts/AirbnbCereal_W_Bd.otf) format('opentype'),
-  }
 
 * {
   box-sizing: border-box;
