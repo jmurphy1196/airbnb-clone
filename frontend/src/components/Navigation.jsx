@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { styled } from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserCircle, faBars } from "@fortawesome/free-solid-svg-icons";
@@ -64,7 +64,7 @@ const NavbarContainer = styled.nav`
     top: 89%;
     border: 2px solid ${({ theme }) => theme.toggleBorder};
     width: 250px;
-    right: 5%;
+    right: 1px;
     background-color: ${({ theme }) => theme.background};
     box-shadow: 4px 4px 20px ${({ theme }) => theme.toggleBorder};
     padding: 10px 0px;
@@ -90,7 +90,19 @@ const NavbarContainer = styled.nav`
 
 export default function Navigation() {
   const theme = useTheme();
-  const [submenuActive, setSubmenuAvtice] = useState(false);
+  const [submenuActive, setSubmenuActive] = useState(false);
+  const btnRef = useRef(null);
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (btnRef.current && !btnRef.current.contains(event.target)) {
+        if (submenuActive) setSubmenuActive(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [btnRef, submenuActive, setSubmenuActive]);
   return (
     <NavbarContainer>
       <div className='brand'>
@@ -102,7 +114,11 @@ export default function Navigation() {
           <h1>airbnb</h1>
         </Link>
       </div>
-      <div className='menu' onClick={() => setSubmenuAvtice(!submenuActive)}>
+      <div
+        className='menu'
+        onClick={() => setSubmenuActive(!submenuActive)}
+        ref={btnRef}
+      >
         <button className={`${submenuActive && "sub-active"}`}>
           <FontAwesomeIcon icon={faBars} color={theme.text} />
           <FontAwesomeIcon icon={faUserCircle} color={theme.text} />
