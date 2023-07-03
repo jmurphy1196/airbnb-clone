@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserCircle, faBars } from "@fortawesome/free-solid-svg-icons";
 import { useTheme } from "styled-components";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
+import LoginModal from "./session/LoginModal";
 
 const NavbarContainer = styled.nav`
   width: 100%;
@@ -31,7 +32,7 @@ const NavbarContainer = styled.nav`
     color: ${({ theme }) => theme.primary};
     font-size: 1.8rem;
   }
-  button {
+  button.menu-btn {
     outline: none;
     border: 2px solid ${({ theme }) => theme.toggleBorder};
     background-color: ${({ theme }) => theme.background};
@@ -42,7 +43,7 @@ const NavbarContainer = styled.nav`
     align-self: center;
     border-radius: 1000px;
   }
-  button:hover {
+  button.menu-btn:hover {
     box-shadow: 2px 4px 5px ${({ theme }) => theme.toggleBorder};
   }
   .menu {
@@ -86,15 +87,31 @@ const NavbarContainer = styled.nav`
   .sub-menu span {
     margin-left: 10px;
   }
+  .sub-menu button {
+    text-align: start;
+    background-color: ${({ theme }) => theme.background};
+    font-size: inherit;
+  }
+  .sub-menu button:hover {
+    background-color: ${({ theme }) => theme.background};
+  }
+  .sub-menu button li {
+    width: 100%;
+  }
 `;
 
 export default function Navigation() {
   const theme = useTheme();
   const [submenuActive, setSubmenuActive] = useState(false);
+  const [loginModalIsOpen, setLoginModalIsOpen] = useState(false);
   const btnRef = useRef(null);
   useEffect(() => {
     function handleClickOutside(event) {
-      if (btnRef.current && !btnRef.current.contains(event.target)) {
+      if (
+        btnRef.current &&
+        !btnRef.current.contains(event.target) &&
+        !loginModalIsOpen
+      ) {
         if (submenuActive) setSubmenuActive(false);
       }
     }
@@ -102,7 +119,7 @@ export default function Navigation() {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [btnRef, submenuActive, setSubmenuActive]);
+  }, [btnRef, submenuActive, setSubmenuActive, loginModalIsOpen]);
   return (
     <NavbarContainer>
       <div className='brand'>
@@ -119,7 +136,7 @@ export default function Navigation() {
         onClick={() => setSubmenuActive(!submenuActive)}
         ref={btnRef}
       >
-        <button className={`${submenuActive && "sub-active"}`}>
+        <button className={`menu-btn ${submenuActive && "sub-active"}`}>
           <FontAwesomeIcon icon={faBars} color={theme.text} />
           <FontAwesomeIcon icon={faUserCircle} color={theme.text} />
         </button>
@@ -132,11 +149,11 @@ export default function Navigation() {
                   <span>Sign up</span>
                 </li>
               </Link>
-              <Link to='/login'>
+              <button onClick={() => setLoginModalIsOpen(true)}>
                 <li>
                   <span>Log in</span>
                 </li>
-              </Link>
+              </button>
               <Link>
                 <li>
                   <span>Airbnb your home</span>
@@ -151,6 +168,10 @@ export default function Navigation() {
           </div>
         )}
       </div>
+      <LoginModal
+        isOpen={loginModalIsOpen}
+        onRequestClose={() => setLoginModalIsOpen(false)}
+      />
     </NavbarContainer>
   );
 }

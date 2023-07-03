@@ -20,7 +20,14 @@ export const Globalstyle = createGlobalStyle`
     color: ${({ theme }) => theme.text};
     font-family: Airbnb, "Inter";
     overflow: hidden;
+    position: relative;
 
+  }
+  button{
+    outline: none;
+    border: none;
+    padding: 0;
+    margin: 0;
   }
   button:hover {
     cursor: pointer;

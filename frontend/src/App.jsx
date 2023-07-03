@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { thunkSetSession, thunkGetSession } from "./store/session";
 import { Switch, Route } from "react-router-dom";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
-import LoginFormPage from "./components/session/LoginFormPage";
+import LoginFormPage from "./components/session/LoginModal";
 import Protected from "./Protected";
 import { Globalstyle } from "./GlobalStyle";
 import { ThemeProvider } from "styled-components";
@@ -31,11 +31,7 @@ function App() {
         {!loading && (
           <>
             <Navigation />
-            <Switch>
-              <Route exact path='/login'>
-                <LoginFormPage />
-              </Route>
-            </Switch>
+            <Switch></Switch>
           </>
         )}
       </ThemeProvider>
