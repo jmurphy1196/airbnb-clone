@@ -40,6 +40,43 @@ export const thunkGetSession = () => async (dispatch) => {
   }
 };
 
+export const thunkCreateUser =
+  ({ email, username, password, firstName, lastName }) =>
+  async (dispatch) => {
+    try {
+      const res = await csrfFetch("/api/users", {
+        method: "POST",
+        body: {
+          email,
+          username,
+          password,
+          firstName,
+          lastName,
+        },
+      });
+      const data = await res.json();
+      await csrfFetch("/api/session", {
+        method: "POST",
+        body: { credential: username, password },
+      });
+      await csrfFetch("/api/session");
+      dispatch(setSession(data));
+
+      return data;
+    } catch (err) {
+      const errJSON = await err.json();
+      return errJSON;
+    }
+  };
+
+export const thunkRemoveSession = () => async (dispatch) => {
+  const res = await csrfFetch("/api/session", {
+    method: "DELETE",
+  });
+  dispatch(removeSession());
+  return res;
+};
+
 export const sessionReducer = (state = initalState, action) => {
   switch (action.type) {
     case actionTypes.SET_SESSION: {

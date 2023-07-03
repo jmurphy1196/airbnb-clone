@@ -24,6 +24,7 @@ export const lightTheme = {
   background: "#FFFFFF",
   toggleBorder: "#DDDDDD",
   primary: "#FF5A5F",
+  secondary: "#00A699",
 };
 export const darkTheme = {
   body: "#363537",
@@ -31,4 +32,5 @@ export const darkTheme = {
   toggleBorder: "#6B8096",
   background: "#999",
   primary: "#FF5A5F",
+  secondary: "#00A699",
 };

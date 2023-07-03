@@ -45,6 +45,25 @@ export const Globalstyle = createGlobalStyle`
     text-decoration: none;
     color: inherit;
   }
+  svg:hover {
+    cursor: pointer;
+  }
+
+  /* modal style */
+  .ReactModal__Content{
+    top: 50%;
+    left: 50%;
+    width: 550px; 
+    height: 750px;
+    margin: auto auto;
+    padding: 0 !important;
+    display: flex;
+    border-radius: 16px !important;
+  }
+  @keyframes spin {
+    from {transform:rotate(0deg);}
+    to {transform:rotate(360deg);}
+}
 
 
 `;

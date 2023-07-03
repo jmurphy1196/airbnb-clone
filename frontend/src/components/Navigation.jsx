@@ -5,6 +5,9 @@ import { faUserCircle, faBars } from "@fortawesome/free-solid-svg-icons";
 import { useTheme } from "styled-components";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
 import LoginModal from "./session/LoginModal";
+import { useSelector, useDispatch } from "react-redux";
+import { thunkRemoveSession } from "../store/session";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 const NavbarContainer = styled.nav`
   width: 100%;
@@ -68,8 +71,15 @@ const NavbarContainer = styled.nav`
     right: 1px;
     background-color: ${({ theme }) => theme.background};
     box-shadow: 4px 4px 20px ${({ theme }) => theme.toggleBorder};
-    padding: 10px 0px;
     border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .sub-menu p {
+    margin-right: auto;
+    padding-left: 10px;
+    text-transform: capitalize;
   }
   .sub-menu ul {
     display: flex;
@@ -77,6 +87,8 @@ const NavbarContainer = styled.nav`
     gap: 10px;
     font-size: 1.2rem;
     width: 100%;
+    padding-bottom: 5px;
+    padding-top: 5px;
   }
   .sub-menu ul li {
     padding: 2px;
@@ -102,16 +114,18 @@ const NavbarContainer = styled.nav`
 
 export default function Navigation() {
   const theme = useTheme();
+  const user = useSelector((state) => state.session.user);
+  const history = useHistory();
+  const dispatch = useDispatch();
   const [submenuActive, setSubmenuActive] = useState(false);
-  const [loginModalIsOpen, setLoginModalIsOpen] = useState(false);
+  const [formOptions, setFormOptions] = useState({
+    open: false,
+    type: "login",
+  });
   const btnRef = useRef(null);
   useEffect(() => {
     function handleClickOutside(event) {
-      if (
-        btnRef.current &&
-        !btnRef.current.contains(event.target) &&
-        !loginModalIsOpen
-      ) {
+      if (btnRef.current && !btnRef.current.contains(event.target)) {
         if (submenuActive) setSubmenuActive(false);
       }
     }
@@ -119,7 +133,11 @@ export default function Navigation() {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [btnRef, submenuActive, setSubmenuActive, loginModalIsOpen]);
+  }, [btnRef, submenuActive, setSubmenuActive]);
+  const handleSignout = async () => {
+    const res = await dispatch(thunkRemoveSession());
+    history.push("/");
+  };
   return (
     <NavbarContainer>
       <div className='brand'>
@@ -142,18 +160,37 @@ export default function Navigation() {
         </button>
         {submenuActive && (
           <div className='sub-menu'>
+            {user?.firstName && <p>Hello, {user.firstName}</p>}
             <ul>
-              <Link>
-                {" "}
-                <li>
-                  <span>Sign up</span>
-                </li>
-              </Link>
-              <button onClick={() => setLoginModalIsOpen(true)}>
-                <li>
-                  <span>Log in</span>
-                </li>
-              </button>
+              {!user && (
+                <>
+                  <button
+                    onClick={() =>
+                      setFormOptions({ type: "signup", open: true })
+                    }
+                  >
+                    <li>
+                      <span>Sign up</span>
+                    </li>
+                  </button>
+                  <button
+                    onClick={() =>
+                      setFormOptions({ type: "login", open: true })
+                    }
+                  >
+                    <li>
+                      <span>Log in</span>
+                    </li>
+                  </button>
+                </>
+              )}
+              {user && (
+                <button onClick={handleSignout}>
+                  <li>
+                    <span>Sign out</span>
+                  </li>
+                </button>
+              )}
               <Link>
                 <li>
                   <span>Airbnb your home</span>
@@ -169,8 +206,15 @@ export default function Navigation() {
         )}
       </div>
       <LoginModal
-        isOpen={loginModalIsOpen}
-        onRequestClose={() => setLoginModalIsOpen(false)}
+        isOpen={formOptions.open}
+        onRequestClose={() => setFormOptions({ ...formOptions, open: false })}
+        formType={formOptions.type}
+        setFormType={() =>
+          setFormOptions({
+            ...formOptions,
+            type: formOptions.type === "login" ? "signup" : "login",
+          })
+        }
       />
     </NavbarContainer>
   );
