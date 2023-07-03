@@ -19,8 +19,9 @@ export const Globalstyle = createGlobalStyle`
     background: ${({ theme }) => theme.body};
     color: ${({ theme }) => theme.text};
     font-family: Airbnb, "Inter";
-    overflow: hidden;
+    overflow-x: hidden;
     position: relative;
+    max-width: 100vw;
 
   }
   button{

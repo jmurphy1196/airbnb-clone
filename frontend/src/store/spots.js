@@ -19,6 +19,8 @@ export const thunkGetSpots =
       const res = await csrfFetch("/api/spots");
       const data = await res.json();
       console.log("this is the data", data);
+      dispatch(getSpots(data));
+      return data;
     } catch (err) {
       console.log(err);
     }
@@ -28,9 +30,14 @@ export const spotsReducer = (state = initalState, action) => {
   switch (action.type) {
     case actionTypes.GET_SPOTS: {
       const newState = { ...state };
-      const oldSpots = { ...state.allSpots };
       const { Spots } = action.payload;
-      newState.allSpots = { ...oldSpots, ...Spots };
+      newState.allSpots = { ...state.allSpots };
+      for (let spot of Spots) {
+        newState.allSpots[spot.id] = spot;
+      }
+      if (!newState.orderedSpots.length) {
+        newState.orderedSpots = [...Spots];
+      }
       return newState;
     }
     default:

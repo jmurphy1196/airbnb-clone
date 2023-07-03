@@ -3,12 +3,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { thunkSetSession, thunkGetSession } from "./store/session";
 import { Switch, Route } from "react-router-dom";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
-import LoginFormPage from "./components/session/LoginModal";
 import Protected from "./Protected";
 import { Globalstyle } from "./GlobalStyle";
 import { ThemeProvider } from "styled-components";
 import { lightTheme, darkTheme } from "./theme";
 import Navigation from "./components/Navigation";
+import { thunkGetSpots } from "./store/spots";
+import { SpotsGrid } from "./components/spots/SpotsGrid";
 
 function App() {
   const dispatch = useDispatch();
@@ -21,6 +22,7 @@ function App() {
   useEffect(() => {
     (async () => {
       await dispatch(thunkGetSession());
+      await dispatch(thunkGetSpots());
       setLoading(false);
     })();
   }, [dispatch]);
@@ -31,7 +33,11 @@ function App() {
         {!loading && (
           <>
             <Navigation />
-            <Switch></Switch>
+            <Switch>
+              <Route exact path='/'>
+                <SpotsGrid />
+              </Route>
+            </Switch>
           </>
         )}
       </ThemeProvider>
