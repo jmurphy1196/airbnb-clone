@@ -55,6 +55,10 @@ const ModalWrapper = styled.div`
   p.error {
     color: red;
   }
+  input.error {
+    border: 1px solid red;
+    outline: none;
+  }
 
   .border {
     display: flex;
@@ -102,7 +106,10 @@ export default function LoginModal({
     formState: { errors },
     reset,
     setError,
+    watch,
   } = useForm();
+
+  console.log("these are the form errors", errors);
 
   const submitHandler = async ({
     credential,
@@ -167,8 +174,12 @@ export default function LoginModal({
   return (
     <Modal
       isOpen={isOpen}
-      onRequestClose={onRequestClose}
+      onRequestClose={() => {
+        reset();
+        onRequestClose();
+      }}
       contentLabel='Login modal'
+      onAfterClose={() => reset()}
     >
       <ModalWrapper>
         {formType === "login" ? (
@@ -177,17 +188,34 @@ export default function LoginModal({
               <FontAwesomeIcon icon={faCircleXmark} onClick={onRequestClose} />
               <h2>Login or sign up</h2>
             </header>
-            {errors?.login?.message && (
-              <p className='error'>{errors?.login?.message}</p>
-            )}
+            <div className='errors'>
+              {Object.keys(errors).map((err) => {
+                if (errors[err].message) {
+                  return <p className='error'>{errors[err].message}</p>;
+                }
+              })}
+              {errors?.login?.message && (
+                <p className='error'>{errors?.login?.message}</p>
+              )}
+              {errors?.credential && (
+                <p className='error'>Credential is required</p>
+              )}
+              {errors?.password && (
+                <p className='error'>Password is required</p>
+              )}
+            </div>
             <input
               placeholder='username or email'
               type='text'
-              {...register("credential", { required: true })}
+              className={`${errors.credential && "error"}`}
+              {...register("credential", {
+                required: true,
+              })}
             />
             <input
               placeholder='password'
               type='password'
+              className={`${errors.password && "error"}`}
               {...register("password", { required: true })}
             />
             <button type='submit' disabled={loading}>
@@ -217,6 +245,12 @@ export default function LoginModal({
               <FontAwesomeIcon icon={faCircleXmark} onClick={onRequestClose} />
               <h2>Login or sign up</h2>
             </header>
+            <div className='errors'>
+              {Object.keys(errors).map((err) => {
+                if (errors[err].message)
+                  return <p className='error'>{errors[err].message}</p>;
+              })}
+            </div>
             {errors?.username?.message && (
               <p className='error'>{errors?.username?.message}</p>
             )}
@@ -226,26 +260,43 @@ export default function LoginModal({
             <input
               placeholder='username'
               type='text'
+              className={`${errors.username && "error"}`}
               {...register("username", { required: true })}
             />
             <input
               placeholder='email'
               type='email'
+              className={`${errors.email && "error"}`}
               {...register("email", { required: true })}
             />
             <input
               placeholder='password'
               type='password'
+              className={`${errors.password && "error"}`}
               {...register("password", { required: true })}
+            />
+            <input
+              placeholder='confirm password'
+              type='password'
+              className={`${errors.confirmPassword && "error"}`}
+              {...register("confirmPassword", {
+                required: true,
+                validate: (val) =>
+                  watch("password") !== val
+                    ? "Your passwords do not match"
+                    : undefined,
+              })}
             />
             <input
               placeholder='first name'
               type='text'
+              className={`${errors.firstName && "error"}`}
               {...register("firstName", { required: true })}
             />
             <input
               placeholder='last name'
               type='text'
+              className={`${errors.lastName && "error"}`}
               {...register("lastName", { required: true })}
             />
             <button type='submit'>Signup</button>

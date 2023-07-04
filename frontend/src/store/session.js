@@ -25,7 +25,7 @@ export const thunkSetSession =
       dispatch(setSession(data));
       return data;
     } catch (err) {
-      return err.json();
+      return await err.json();
     }
   };
 
