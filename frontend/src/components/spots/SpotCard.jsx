@@ -1,6 +1,8 @@
 import { styled } from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
+import { Tooltip } from "react-tooltip";
+import { Link } from "react-router-dom/cjs/react-router-dom.min";
 
 const SpotCardWrapper = styled.div`
   display: flex;
@@ -39,8 +41,12 @@ const SpotCardWrapper = styled.div`
 
 export const SpotCard = ({ spot }) => {
   return (
-    <>
-      <SpotCardWrapper>
+    <Link to={`/spots/${spot.id}`}>
+      <SpotCardWrapper
+        data-tooltip-id={spot.id}
+        data-tooltip-content={spot.name}
+        data-tooltip-place='top-start'
+      >
         <div className='preview'>
           <img
             src={`${spot.preview != null ? spot.preview : "./stock-house.png"}`}
@@ -63,8 +69,9 @@ export const SpotCard = ({ spot }) => {
           <span>
             <span className='price'>${spot.price}</span> / night
           </span>
+          <Tooltip id={spot.id} />
         </div>
       </SpotCardWrapper>
-    </>
+    </Link>
   );
 };

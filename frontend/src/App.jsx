@@ -10,6 +10,8 @@ import { lightTheme, darkTheme } from "./theme";
 import Navigation from "./components/Navigation";
 import { thunkGetSpots } from "./store/spots";
 import { SpotsGrid } from "./components/spots/SpotsGrid";
+import SpotDetails from "./components/spots/SpotDetails";
+import NotFound from "./components/NotFound";
 
 function App() {
   const dispatch = useDispatch();
@@ -36,6 +38,12 @@ function App() {
             <Switch>
               <Route exact path='/'>
                 <SpotsGrid />
+              </Route>
+              <Route exact path='/spots/:spotId'>
+                <SpotDetails />
+              </Route>
+              <Route path='/'>
+                <NotFound />
               </Route>
             </Switch>
           </>

@@ -86,9 +86,6 @@ const ModalWrapper = styled.div`
     pointer-events: none;
     filter: brightness(95%);
   }
-  .spinner {
-    animation: spin 1s ease-in-out infinite;
-  }
 `;
 
 export default function LoginModal({
@@ -108,8 +105,6 @@ export default function LoginModal({
     setError,
     watch,
   } = useForm();
-
-  console.log("these are the form errors", errors);
 
   const submitHandler = async ({
     credential,
@@ -154,13 +149,14 @@ export default function LoginModal({
     }
   };
   const loginDemoUser = async () => {
+    //hacky way of doing this. Only closing modal early beacuse errors show up on form otherwise. it thinks the inputs were touched when i click demo user.
+    // onRequestClose();
     const data = await dispatch(
       thunkSetSession({ credential: "Demo-lition", password: "password" })
     );
     if (data.errors && data.errors.credential) {
       setError("login", { type: "custom", message: data.errors.credential });
     } else {
-      reset();
       onRequestClose();
     }
   };
@@ -183,7 +179,12 @@ export default function LoginModal({
     >
       <ModalWrapper>
         {formType === "login" ? (
-          <form onSubmit={handleSubmit(submitHandler)}>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSubmit(submitHandler);
+            }}
+          >
             <header>
               <FontAwesomeIcon icon={faCircleXmark} onClick={onRequestClose} />
               <h2>Login or sign up</h2>
@@ -218,7 +219,12 @@ export default function LoginModal({
               className={`${errors.password && "error"}`}
               {...register("password", { required: true })}
             />
-            <button type='submit' disabled={loading}>
+            <button
+              type='submit'
+              disabled={() => {
+                loginDemoUser();
+              }}
+            >
               {!loading ? (
                 "Login"
               ) : (

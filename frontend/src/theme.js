@@ -4,7 +4,7 @@ export const fontSizes = {
   lg: "4em",
   xlg: "5em",
 };
-const size = {
+export const size = {
   mobile: "375px",
   tablet: "768px",
   laptop: "1024px",

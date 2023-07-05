@@ -18,7 +18,6 @@ export const thunkGetSpots =
     try {
       const res = await csrfFetch("/api/spots");
       const data = await res.json();
-      console.log("this is the data", data);
       dispatch(getSpots(data));
       return data;
     } catch (err) {

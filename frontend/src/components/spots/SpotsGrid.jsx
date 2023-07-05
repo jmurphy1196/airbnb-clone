@@ -8,7 +8,7 @@ export const SpotsGrid = () => {
     <>
       <SpotsWrapper>
         {orderedSpots.map((spot) => {
-          return <SpotCard spot={spot} />;
+          return <SpotCard key={spot.id} spot={spot} />;
         })}
       </SpotsWrapper>
     </>

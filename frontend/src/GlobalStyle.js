@@ -16,6 +16,7 @@ export const Globalstyle = createGlobalStyle`
     overflow-x: hidden;
     position: relative;
     max-width: 100vw;
+    padding-bottom: 30px;
 
   }
   button{
@@ -54,6 +55,9 @@ export const Globalstyle = createGlobalStyle`
     padding: 0 !important;
     display: flex;
     border-radius: 16px !important;
+  }
+  .spinner {
+    animation: spin 1s ease-in-out infinite;
   }
   @keyframes spin {
     from {transform:rotate(0deg);}
