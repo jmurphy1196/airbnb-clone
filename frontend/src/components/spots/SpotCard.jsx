@@ -60,7 +60,8 @@ export const SpotCard = ({ spot }) => {
             </h4>
             <span>
               {" "}
-              <FontAwesomeIcon icon={faStar} width={15} /> {spot.avgRating}
+              <FontAwesomeIcon icon={faStar} width={15} color='gold' />{" "}
+              {spot.avgRating}
             </span>
           </header>
           <span className='desc'>{spot.description}</span>

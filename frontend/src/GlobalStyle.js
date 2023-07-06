@@ -15,7 +15,6 @@ export const Globalstyle = createGlobalStyle`
     font-family: Airbnb, "Inter";
     overflow-x: hidden;
     position: relative;
-    max-width: 100vw;
     padding-bottom: 30px;
 
   }
@@ -50,7 +49,7 @@ export const Globalstyle = createGlobalStyle`
     top: 50%;
     left: 50%;
     width: 550px; 
-    height: 750px;
+    height: fit-content;
     margin: auto auto;
     padding: 0 !important;
     display: flex;
@@ -62,6 +61,9 @@ export const Globalstyle = createGlobalStyle`
   @keyframes spin {
     from {transform:rotate(0deg);}
     to {transform:rotate(360deg);}
+}
+textarea {
+  resize: none
 }
 
 

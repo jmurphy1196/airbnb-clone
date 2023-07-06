@@ -5,6 +5,7 @@ const initalState = {
   spotData: {},
   spotImages: [],
   Owner: {},
+  reviewCount: null,
 };
 const getSpotDetails = (data) => ({
   type: actionTypes.GET_SPOT_DETAILS,
@@ -87,6 +88,15 @@ export const singleSpotReducer = (state = initalState, action) => {
       const newState = { ...state };
       const { Reviews } = action.payload;
       newState.Reviews = Reviews;
+      newState.reviewCount = Reviews.length;
+
+      return newState;
+    }
+    case actionTypes.CREATE_REVIEW: {
+      const newState = { ...state };
+      if (newState.Reviews) {
+        newState.Reviews = [...newState.Reviews, action.payload];
+      }
       return newState;
     }
     default:

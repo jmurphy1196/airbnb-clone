@@ -13,6 +13,7 @@ const ModalWrapper = styled.div`
   height: 100%;
   width: 100%;
   padding: 0 20px;
+  padding-bottom: 30px;
   form {
     display: flex;
     flex-direction: column;
@@ -219,12 +220,7 @@ export default function LoginModal({
               className={`${errors.password && "error"}`}
               {...register("password", { required: true })}
             />
-            <button
-              type='submit'
-              disabled={() => {
-                loginDemoUser();
-              }}
-            >
+            <button type='submit' disabled={loading}>
               {!loading ? (
                 "Login"
               ) : (

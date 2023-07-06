@@ -9,11 +9,13 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
 import ReviewList from "../reviews/ReviewList";
+import ReviewModal from "../reviews/ReviewModal";
 
 export default function SpotDetails() {
   const dispatch = useDispatch();
   const { spotId } = useParams();
   const [loadingReviews, setLoadingReviews] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
   const user = useSelector((state) => state.session.user);
   const spot = useSelector((state) =>
     state.singleSpot.id == spotId ? state.singleSpot : null
@@ -64,20 +66,30 @@ export default function SpotDetails() {
                 <strong>${spot.price}</strong>/ night
               </span>
               <span>
-                <FontAwesomeIcon icon={faStar} width={20} />
+                <FontAwesomeIcon icon={faStar} width={20} color='gold' />
                 {spot.avgStarRating}
               </span>
-              <span># reviews</span>
+              <span>{spot.reviewCount && spot.reviewCount} reviews</span>
             </header>
             <button>Reserve</button>
           </div>
         </div>
       </div>
+      {user && (
+        <button id='review-btn' onClick={() => setIsOpen(true)}>
+          Post a review
+        </button>
+      )}
       {loadingReviews ? (
         <ReviewList loading={true} />
       ) : (
         <ReviewList reviews={reviews} />
       )}
+      <ReviewModal
+        spotId={spot?.id}
+        isOpen={isOpen}
+        onRequestClose={() => setIsOpen(false)}
+      />
     </SpotDetailsWrapper>
   );
 }

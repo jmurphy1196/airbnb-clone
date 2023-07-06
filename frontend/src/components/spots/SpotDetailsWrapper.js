@@ -120,4 +120,12 @@ export const SpotDetailsWrapper = styled.div`
     font-weight: bold;
     font-size: 1.2rem;
   }
+  #review-btn {
+    max-width: 250px;
+    padding: 15px 5px;
+    background-color: ${({ theme }) => theme.secondary};
+    color: ${({ theme }) => theme.background};
+    font-size: 1.3rem;
+    border-radius: 2px;
+  }
 `;

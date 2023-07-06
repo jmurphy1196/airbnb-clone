@@ -17,6 +17,7 @@ export default function Review({ review }) {
               <FontAwesomeIcon
                 icon={review.stars >= val ? faStar : faStarEmpty}
                 width={20}
+                color='gold'
               />
             );
           })}
