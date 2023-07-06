@@ -4,6 +4,7 @@ const GET_SESSION = "session/getUserData";
 const GET_SPOTS = "spots/getSpotsData";
 const GET_SPOT_DETAILS = "singleSpot/getSpotDetails";
 const GET_SPOT_REVIEWS = "singleSpot/getSpotReviews";
+const CREATE_SPOT = "singleSpot/createSpot";
 
 export const actionTypes = {
   SET_SESSION,

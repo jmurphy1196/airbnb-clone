@@ -26,6 +26,10 @@ export const SpotDetailsWrapper = styled.div`
       grid-template-columns: repeat(4, minmax(180px, 1fr));
     }
   }
+  img {
+    border-radius: 16px;
+    border: 1px solid ${({ theme }) => theme.toggleBorder};
+  }
   .main-image {
     grid-column-start: 1;
     grid-column-end: 3;

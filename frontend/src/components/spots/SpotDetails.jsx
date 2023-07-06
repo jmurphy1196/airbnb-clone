@@ -23,7 +23,6 @@ export default function SpotDetails() {
 
   useEffect(() => {
     (async () => {
-      console.log("fetching deets");
       const data = await dispatch(thunkGetSpotDetails(spotId));
       const reviewData = await dispatch(thunkGetSpotReviews(spotId));
       setLoadingReviews(false);

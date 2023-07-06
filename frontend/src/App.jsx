@@ -12,6 +12,7 @@ import { thunkGetSpots } from "./store/spots";
 import { SpotsGrid } from "./components/spots/SpotsGrid";
 import SpotDetails from "./components/spots/SpotDetails";
 import NotFound from "./components/NotFound";
+import CreateSpot from "./components/spots/CreateSpot";
 
 function App() {
   const dispatch = useDispatch();
@@ -38,6 +39,9 @@ function App() {
             <Switch>
               <Route exact path='/'>
                 <SpotsGrid />
+              </Route>
+              <Route exact path='/spots/new'>
+                <CreateSpot />
               </Route>
               <Route exact path='/spots/:spotId'>
                 <SpotDetails />

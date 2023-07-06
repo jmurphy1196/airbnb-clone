@@ -1,6 +1,6 @@
 import Cookies from "js-cookie";
 
-export async function csrfFetch(url, options = {}) {
+export async function csrfFetch(url, options = {}, isMulti = false) {
   options.method = options.method || "GET";
   options.headers = options.headers || {};
   if (options.method.toUpperCase() !== "GET") {
@@ -8,10 +8,18 @@ export async function csrfFetch(url, options = {}) {
       options.headers["Content-Type"] || "application/json";
     options.headers["XSRF-Token"] = Cookies.get("XSRF-TOKEN");
   }
-  if (options.body && options.headers["Content-Type"] === "application/json") {
+  if (
+    options.body &&
+    options.headers["Content-Type"] === "application/json" &&
+    isMulti === false
+  ) {
     options.body = JSON.stringify(options.body);
   }
-  const res = await window.fetch(url, options);
+  if (isMulti) {
+    delete options.headers["Content-Type"];
+  }
+
+  const res = await fetch(url, options);
   if (res.status >= 400) throw res;
   return res;
 }

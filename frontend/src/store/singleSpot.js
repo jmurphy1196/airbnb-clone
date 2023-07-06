@@ -38,6 +38,42 @@ export const thunkGetSpotReviews = (spotId) => async (dispatch) => {
   }
 };
 
+export const thunkCreateSpot = (data) => async (dispatch) => {
+  try {
+    const res = await csrfFetch("/api/spots", {
+      method: "POST",
+      body: data,
+    });
+    const jsonData = await res.json();
+    const newSpotId = jsonData.id;
+    console.log("this is the new id", newSpotId);
+    return newSpotId;
+  } catch (err) {
+    console.log("there was an error", err);
+    return err;
+  }
+};
+
+export const postSpotImages = async (spotId, images) => {
+  try {
+    const formData = new FormData();
+    for (let img of images) {
+      formData.append("images[]", img);
+    }
+    const res = await csrfFetch(
+      `/api/spots/${spotId}/images/array?previewImgInd=0`,
+      {
+        method: "POST",
+        body: formData,
+      },
+      true
+    );
+    return await res.json();
+  } catch (err) {
+    console.log("there was an error", err);
+    return err;
+  }
+};
 export const singleSpotReducer = (state = initalState, action) => {
   switch (action.type) {
     case actionTypes.GET_SPOT_DETAILS: {

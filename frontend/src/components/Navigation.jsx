@@ -191,7 +191,7 @@ export default function Navigation() {
                   </li>
                 </button>
               )}
-              <Link>
+              <Link to='/spots/new'>
                 <li>
                   <span>Airbnb your home</span>
                 </li>
