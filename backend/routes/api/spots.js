@@ -476,14 +476,16 @@ router.post(
   canUploadMoreImages,
   uploadImage.array("images[]"),
   async (req, res, next) => {
+    const { previewImgInd } = req.query;
     if (!req.files.length) {
       return next(new BadReqestError("Please upload at least one image"));
     }
     const data = [];
-    for (let file of req.files) {
+    for (let i = 0; i < req.files.length; i++) {
+      const file = req.files[i];
       const image = await req.spot.createSpotImage({
         url: file.location,
-        preview: false,
+        preview: previewImgInd == i ? true : false,
       });
       data.push(image);
     }

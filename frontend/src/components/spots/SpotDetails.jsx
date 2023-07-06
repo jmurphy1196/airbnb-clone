@@ -14,6 +14,7 @@ export default function SpotDetails() {
   const dispatch = useDispatch();
   const { spotId } = useParams();
   const [loadingReviews, setLoadingReviews] = useState(true);
+  const user = useSelector((state) => state.session.user);
   const spot = useSelector((state) =>
     state.singleSpot.id == spotId ? state.singleSpot : null
   );

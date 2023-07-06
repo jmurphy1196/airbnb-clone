@@ -2,7 +2,11 @@ import React, { useState, useRef, useEffect } from "react";
 import { CreateSpotWrapper } from "./CreateSpotWrapper";
 import { VALID_STATES } from "../../constants";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUpload, faTrash } from "@fortawesome/free-solid-svg-icons";
+import {
+  faUpload,
+  faTrash,
+  faSpinner,
+} from "@fortawesome/free-solid-svg-icons";
 import { postSpotImages, thunkCreateSpot } from "../../store/singleSpot";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
@@ -11,6 +15,7 @@ export default function CreateSpot() {
   const dispatch = useDispatch();
   const history = useHistory();
   const [images, setImages] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [spotData, setSpotData] = useState({
     address: "",
     city: "",
@@ -43,11 +48,13 @@ export default function CreateSpot() {
       name: true,
     });
     if (!Object.keys(formErrors).length) {
+      setLoading(true);
       const newSpotId = await dispatch(thunkCreateSpot(spotData));
       const posted = await postSpotImages(newSpotId, images);
       console.log(posted);
       history.push(`/spots/${newSpotId}`);
     }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -244,7 +251,13 @@ export default function CreateSpot() {
             />
           </div>
         </div>
-        <button type='submit'>Create Spot</button>
+        <button disabled={loading} type='submit'>
+          {loading ? (
+            <FontAwesomeIcon icon={faSpinner} className='spinner' />
+          ) : (
+            "Create a spot"
+          )}
+        </button>
       </form>
     </CreateSpotWrapper>
   );

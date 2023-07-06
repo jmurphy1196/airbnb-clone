@@ -13,7 +13,9 @@ const getLocationData = async ({ address, city, state }) => {
   //returns an array of items length of 1
   const data = await response.json();
 
-  return data.items[0];
+  console.log("THIS IS THE DATA", data);
+
+  return data.items[0] || { position: { lat: 20, lng: 20 } };
 };
 
 //takes in the return value of getLocationData
