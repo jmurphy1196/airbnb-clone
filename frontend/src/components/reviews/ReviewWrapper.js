@@ -19,4 +19,11 @@ export const ReviewWrapper = styled.div`
   .content .date {
     color: ${({ theme }) => theme.light};
   }
+  .content button {
+    margin-top: 10px;
+    max-width: 100px;
+    padding: 10px 10px;
+    background-color: ${({ theme }) => theme.light};
+    color: white;
+  }
 `;

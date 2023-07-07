@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Modal from "react-modal";
 import { styled } from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -62,7 +62,7 @@ const ModalWrapper = styled.div`
 
   button[disabled] {
     pointer-events: none;
-    filter: brightness(95%);
+    filter: brightness(75%);
   }
   .stars-container {
     width: 100%;
@@ -79,19 +79,38 @@ const ModalWrapper = styled.div`
 
 export default function ReviewModal({ isOpen, onRequestClose, spotId }) {
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.session.user);
   const [loading, setLoading] = useState(false);
-  const [activeRating, setActiveRating] = useState(1);
-  const [rating, setRating] = useState(1);
+  const [validationErrors, setValidationErrors] = useState({});
+  const [activeRating, setActiveRating] = useState(0);
+  const [rating, setRating] = useState(0);
   const [review, setReview] = useState("");
 
   const handleSubmit = async () => {
-    const res = await thunkCreateReview(spotId, { review, stars: rating });
+    try {
+      const res = await dispatch(
+        thunkCreateReview(spotId, user, { review, stars: rating })
+      );
+      if (res.title) {
+        //there was an error
+        setValidationErrors({ ...validationErrors, review: res.title });
+      } else {
+        onRequestClose();
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
     <Modal
       isOpen={isOpen}
       onRequestClose={() => {
+        setLoading(false);
+        setValidationErrors({});
+        setRating(0);
+        setActiveRating(0);
+        setReview("");
         onRequestClose();
       }}
       contentLabel='Login modal'
@@ -100,13 +119,18 @@ export default function ReviewModal({ isOpen, onRequestClose, spotId }) {
         <form
           onSubmit={(e) => {
             e.preventDefault();
+            handleSubmit();
           }}
         >
           <header>
             <FontAwesomeIcon icon={faCircleXmark} onClick={onRequestClose} />
             <h2>How was your stay?</h2>
           </header>
-          <div className='errors'></div>
+          <div className='errors'>
+            {validationErrors?.review && (
+              <p className='error'>{validationErrors.review}</p>
+            )}
+          </div>
           <textarea
             name='review'
             id=''
@@ -139,7 +163,9 @@ export default function ReviewModal({ isOpen, onRequestClose, spotId }) {
               );
             })}
           </div>
-          <button>Submit your review</button>
+          <button type='submit' disabled={rating < 1 || review.length < 10}>
+            Submit your review
+          </button>
         </form>
       </ModalWrapper>
     </Modal>

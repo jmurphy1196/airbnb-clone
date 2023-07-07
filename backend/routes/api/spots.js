@@ -328,8 +328,14 @@ router.post(
     checkReviewInputData,
     checkUserAlreadyHasReview,
   ],
-  async (req, res) => {
+  async (req, res, next) => {
     const { review, stars } = req.body;
+
+    if (req.spot.ownerId === req.user.id) {
+      return next(
+        new BadReqestError("You cannot make a review for your own spot")
+      );
+    }
 
     const userReview = await Review.create({
       userId: req.user.id,

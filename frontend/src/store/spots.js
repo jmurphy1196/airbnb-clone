@@ -39,6 +39,24 @@ export const spotsReducer = (state = initalState, action) => {
       }
       return newState;
     }
+    case actionTypes.CREATE_SPOT: {
+      const newState = { ...state };
+      newState.allSpots[action.payload.id] = action.payload;
+      newState.orderedSpots = [
+        newState.allSpots[action.payload.id],
+        ...newState.orderedSpots,
+      ];
+      return newState;
+    }
+    case actionTypes.CREATE_SPOT_IMAGES: {
+      const newState = { ...state };
+      const { id, preview } = action.payload;
+      newState.allSpots = { ...newState.allSpots };
+      newState.allSpots[id] = { ...newState.allSpots[id], preview };
+      newState.orderedSpots = [...newState.orderedSpots];
+      newState.orderedSpots[0].preview = preview;
+      return newState;
+    }
     default:
       return state;
   }

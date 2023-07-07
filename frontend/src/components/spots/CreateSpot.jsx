@@ -7,7 +7,7 @@ import {
   faTrash,
   faSpinner,
 } from "@fortawesome/free-solid-svg-icons";
-import { postSpotImages, thunkCreateSpot } from "../../store/singleSpot";
+import { thunkPostSpotImages, thunkCreateSpot } from "../../store/singleSpot";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
@@ -50,7 +50,7 @@ export default function CreateSpot() {
     if (!Object.keys(formErrors).length) {
       setLoading(true);
       const newSpotId = await dispatch(thunkCreateSpot(spotData));
-      const posted = await postSpotImages(newSpotId, images);
+      const posted = await dispatch(thunkPostSpotImages(newSpotId, images));
       console.log(posted);
       history.push(`/spots/${newSpotId}`);
     }
@@ -243,7 +243,7 @@ export default function CreateSpot() {
               onChange={(e) => {
                 if (e.target.files[0]) {
                   const file = e.target.files[0];
-                  if (file.type === "image/png" && images.length < 5) {
+                  if (file.type.substring("image/") && images.length < 5) {
                     setImages([...images, file]);
                   }
                 }

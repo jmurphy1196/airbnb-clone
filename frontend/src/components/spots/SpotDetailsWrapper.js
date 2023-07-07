@@ -104,6 +104,9 @@ export const SpotDetailsWrapper = styled.div`
     @media only screen and (max-width: ${size.laptop}) {
       width: 100%;
     }
+    @media only screen and (max-width: ${size.desktop}) {
+      width: 80%;
+    }
   }
   .spot-pricing header {
     display: flex;

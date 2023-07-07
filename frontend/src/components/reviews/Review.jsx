@@ -2,12 +2,18 @@ import React from "react";
 import { ReviewWrapper } from "./ReviewWrapper";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import { faStar, faSpinner } from "@fortawesome/free-solid-svg-icons";
+import { faStar } from "@fortawesome/free-solid-svg-icons";
 import dayjs from "dayjs";
 import { faStar as faStarEmpty } from "@fortawesome/free-regular-svg-icons";
+import { useSelector } from "react-redux";
 
-export default function Review({ review }) {
+export default function Review({ review, setActiveReviewId, setIsOpen }) {
   const { User } = review;
+  const usr = useSelector((state) => state.session.user);
+  const handleDelete = () => {
+    setActiveReviewId(review.id);
+    setIsOpen(true);
+  };
   return (
     <ReviewWrapper>
       <header>
@@ -29,6 +35,7 @@ export default function Review({ review }) {
           {dayjs(review.createdAt).format("MM/DD/YYYY")}
         </span>
         <span>{review.review}</span>
+        {usr.id === User.id && <button onClick={handleDelete}>Delete</button>}
       </div>
     </ReviewWrapper>
   );

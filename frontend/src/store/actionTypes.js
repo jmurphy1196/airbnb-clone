@@ -6,6 +6,8 @@ const GET_SPOT_DETAILS = "singleSpot/getSpotDetails";
 const GET_SPOT_REVIEWS = "singleSpot/getSpotReviews";
 const CREATE_SPOT = "singleSpot/createSpot";
 const CREATE_REVIEW = "reviews/createReview";
+const CREATE_SPOT_IMAGES = "spots/createSpotImages";
+const REMOVE_REVIEW = "reviews/removeReview";
 
 export const actionTypes = {
   SET_SESSION,
@@ -14,4 +16,8 @@ export const actionTypes = {
   GET_SPOTS,
   GET_SPOT_DETAILS,
   GET_SPOT_REVIEWS,
+  CREATE_REVIEW,
+  CREATE_SPOT,
+  CREATE_SPOT_IMAGES,
+  REMOVE_REVIEW,
 };
