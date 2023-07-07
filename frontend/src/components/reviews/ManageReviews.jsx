@@ -23,7 +23,11 @@ export default function ManageReviews() {
   }, [dispatch]);
   return (
     <ManageReviewsWrapper>
-      <ReviewList reviews={userReviews} isEdit />
+      {userReviews.length > 0 ? (
+        <ReviewList reviews={userReviews} isEdit />
+      ) : (
+        <p>No reviews</p>
+      )}
     </ManageReviewsWrapper>
   );
 }
