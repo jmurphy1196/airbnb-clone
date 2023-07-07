@@ -104,10 +104,6 @@ export default function DeleteReviewModal({
       isOpen={isOpen}
       onRequestClose={() => {
         setLoading(false);
-        setValidationErrors({});
-        setRating(0);
-        setActiveRating(0);
-        setReview("");
         onRequestClose();
       }}
       contentLabel='Delete review modal'

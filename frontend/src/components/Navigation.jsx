@@ -185,11 +185,18 @@ export default function Navigation() {
                 </>
               )}
               {user && (
-                <button onClick={handleSignout}>
-                  <li>
-                    <span>Sign out</span>
-                  </li>
-                </button>
+                <>
+                  <button onClick={handleSignout}>
+                    <li>
+                      <span>Sign out</span>
+                    </li>
+                  </button>
+                  <Link to='/reviews/current'>
+                    <li>
+                      <span>Manage reviews</span>
+                    </li>
+                  </Link>
+                </>
               )}
               <Link to='/spots/new'>
                 <li>

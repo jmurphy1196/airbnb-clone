@@ -26,4 +26,11 @@ export const ReviewWrapper = styled.div`
     background-color: ${({ theme }) => theme.light};
     color: white;
   }
+  .buttons {
+    display: flex;
+    gap: 20px;
+  }
+  button {
+    width: 100px;
+  }
 `;

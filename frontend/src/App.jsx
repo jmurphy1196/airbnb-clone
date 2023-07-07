@@ -12,6 +12,7 @@ import { SpotsGrid } from "./components/spots/SpotsGrid";
 import SpotDetails from "./components/spots/SpotDetails";
 import NotFound from "./components/NotFound";
 import CreateSpot from "./components/spots/CreateSpot";
+import ManageReviews from "./components/reviews/ManageReviews";
 
 function App() {
   const dispatch = useDispatch();
@@ -43,6 +44,9 @@ function App() {
               </Route>
               <Route exact path='/spots/:spotId'>
                 <SpotDetails />
+              </Route>
+              <Route exact path='/reviews/current'>
+                <ManageReviews />
               </Route>
               <Route path='/'>
                 <NotFound />

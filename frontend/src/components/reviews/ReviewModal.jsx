@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Modal from "react-modal";
 import { styled } from "styled-components";
@@ -10,7 +10,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 import { faStar as faEmptyStar } from "@fortawesome/free-regular-svg-icons";
-import { thunkCreateReview } from "../../store/reviews";
+import { thunkCreateReview, thunkEditReview } from "../../store/reviews";
 
 const ModalWrapper = styled.div`
   background-color: ${({ theme }) => theme.background};
@@ -77,14 +77,31 @@ const ModalWrapper = styled.div`
   }
 `;
 
-export default function ReviewModal({ isOpen, onRequestClose, spotId }) {
+export default function ReviewModal({
+  isOpen,
+  onRequestClose,
+  spotId,
+  isEdit,
+  activeReviewId,
+}) {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.session.user);
+  const existingReview = useSelector(
+    (state) => state.reviews.user[activeReviewId]
+  );
   const [loading, setLoading] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
   const [activeRating, setActiveRating] = useState(0);
   const [rating, setRating] = useState(0);
   const [review, setReview] = useState("");
+
+  useEffect(() => {
+    if (existingReview) {
+      setRating(existingReview.stars);
+      setReview(existingReview.review);
+      setActiveRating(existingReview.stars);
+    }
+  }, [existingReview]);
 
   const handleSubmit = async () => {
     try {
@@ -99,6 +116,16 @@ export default function ReviewModal({ isOpen, onRequestClose, spotId }) {
       }
     } catch (err) {
       console.log(err);
+    }
+  };
+
+  const handleEditSubmit = async () => {
+    const res = await dispatch(
+      thunkEditReview({ id: existingReview.id, review, stars: rating }, user)
+    );
+    if (!res.title) {
+      //no error
+      onRequestClose();
     }
   };
 
@@ -119,12 +146,16 @@ export default function ReviewModal({ isOpen, onRequestClose, spotId }) {
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            handleSubmit();
+            if (!isEdit) {
+              handleSubmit();
+            } else {
+              handleEditSubmit();
+            }
           }}
         >
           <header>
             <FontAwesomeIcon icon={faCircleXmark} onClick={onRequestClose} />
-            <h2>How was your stay?</h2>
+            <h2>{!isEdit ? "How was your stay?" : "Edit review"}</h2>
           </header>
           <div className='errors'>
             {validationErrors?.review && (
@@ -138,6 +169,7 @@ export default function ReviewModal({ isOpen, onRequestClose, spotId }) {
             rows='10'
             placeholder='Enter a review...'
             onChange={(e) => setReview(e.target.value)}
+            value={review}
           ></textarea>
           <div
             className='stars-container'
@@ -164,7 +196,7 @@ export default function ReviewModal({ isOpen, onRequestClose, spotId }) {
             })}
           </div>
           <button type='submit' disabled={rating < 1 || review.length < 10}>
-            Submit your review
+            {isEdit ? "Edit" : "Submit your review"}
           </button>
         </form>
       </ModalWrapper>

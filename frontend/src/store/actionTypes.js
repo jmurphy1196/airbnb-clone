@@ -8,6 +8,8 @@ const CREATE_SPOT = "singleSpot/createSpot";
 const CREATE_REVIEW = "reviews/createReview";
 const CREATE_SPOT_IMAGES = "spots/createSpotImages";
 const REMOVE_REVIEW = "reviews/removeReview";
+const EDIT_REVIEW = "reviews/editReview";
+const GET_USER_REVIEWS = "reviews/getUserReviews";
 
 export const actionTypes = {
   SET_SESSION,
@@ -20,4 +22,6 @@ export const actionTypes = {
   CREATE_SPOT,
   CREATE_SPOT_IMAGES,
   REMOVE_REVIEW,
+  EDIT_REVIEW,
+  GET_USER_REVIEWS,
 };

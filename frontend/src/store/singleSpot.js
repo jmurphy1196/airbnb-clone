@@ -6,6 +6,7 @@ const initalState = {
   spotImages: [],
   Owner: {},
   reviewCount: null,
+  Reviews: [],
 };
 const getSpotDetails = (data) => ({
   type: actionTypes.GET_SPOT_DETAILS,
@@ -35,17 +36,19 @@ export const thunkGetSpotDetails = (spotId) => async (dispatch) => {
   }
 };
 
-export const thunkGetSpotReviews = (spotId) => async (dispatch) => {
-  try {
-    const res = await csrfFetch(`/api/spots/${spotId}/reviews`);
-    const data = await res.json();
-    dispatch(getSpotReviews(data));
-    return data;
-  } catch (err) {
-    console.log("there was an error", err);
-    return await err.json();
-  }
-};
+export const thunkGetSpotReviews =
+  (spotId, usrId = null) =>
+  async (dispatch) => {
+    try {
+      const res = await csrfFetch(`/api/spots/${spotId}/reviews`);
+      const data = await res.json();
+      dispatch(getSpotReviews({ ...data, usrId: usrId }));
+      return data;
+    } catch (err) {
+      console.log("there was an error", err);
+      return await err.json();
+    }
+  };
 
 export const thunkCreateSpot = (data) => async (dispatch) => {
   try {
@@ -126,6 +129,16 @@ export const singleSpotReducer = (state = initalState, action) => {
           (rev) => rev.id !== action.payload
         );
       }
+      return newState;
+    }
+    case actionTypes.EDIT_REVIEW: {
+      const newState = { ...state };
+      newState.Reviews = [...newState.Reviews];
+      let reviewIdx = newState.Reviews.findIndex(
+        (rev) => rev.id === action.payload.id
+      );
+      newState.Reviews[reviewIdx] = action.payload;
+
       return newState;
     }
     default:

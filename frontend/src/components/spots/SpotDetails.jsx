@@ -27,7 +27,7 @@ export default function SpotDetails() {
   useEffect(() => {
     (async () => {
       const data = await dispatch(thunkGetSpotDetails(spotId));
-      const reviewData = await dispatch(thunkGetSpotReviews(spotId));
+      const reviewData = await dispatch(thunkGetSpotReviews(spotId, user?.id));
       setLoadingReviews(false);
     })();
   }, [dispatch]);

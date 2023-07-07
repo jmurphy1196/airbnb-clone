@@ -7,12 +7,22 @@ import dayjs from "dayjs";
 import { faStar as faStarEmpty } from "@fortawesome/free-regular-svg-icons";
 import { useSelector } from "react-redux";
 
-export default function Review({ review, setActiveReviewId, setIsOpen }) {
+export default function Review({
+  review,
+  setActiveReviewId,
+  setIsOpen,
+  isEdit,
+  setEditModal,
+}) {
   const { User } = review;
   const usr = useSelector((state) => state.session.user);
   const handleDelete = () => {
     setActiveReviewId(review.id);
     setIsOpen(true);
+  };
+  const handleEdit = () => {
+    setActiveReviewId(review.id);
+    setEditModal(true);
   };
   return (
     <ReviewWrapper>
@@ -35,7 +45,12 @@ export default function Review({ review, setActiveReviewId, setIsOpen }) {
           {dayjs(review.createdAt).format("MM/DD/YYYY")}
         </span>
         <span>{review.review}</span>
-        {usr?.id === User.id && <button onClick={handleDelete}>Delete</button>}
+        <div className='buttons'>
+          {usr?.id === User.id && (
+            <button onClick={handleDelete}>Delete</button>
+          )}
+          {usr?.id === User.id && <button onClick={handleEdit}>Edit</button>}
+        </div>
       </div>
     </ReviewWrapper>
   );
