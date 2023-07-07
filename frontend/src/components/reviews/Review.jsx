@@ -35,7 +35,7 @@ export default function Review({ review, setActiveReviewId, setIsOpen }) {
           {dayjs(review.createdAt).format("MM/DD/YYYY")}
         </span>
         <span>{review.review}</span>
-        {usr.id === User.id && <button onClick={handleDelete}>Delete</button>}
+        {usr?.id === User.id && <button onClick={handleDelete}>Delete</button>}
       </div>
     </ReviewWrapper>
   );
