@@ -54,6 +54,18 @@ export const Globalstyle = createGlobalStyle`
     padding: 0 !important;
     display: flex;
     border-radius: 16px !important;
+  @media ${device.mobile}  {
+    width: 300px; 
+  }
+  @media ${device.tablet}  {
+    width: 400px; 
+  }
+  @media ${device.laptop}  {
+    width: 500px; 
+  }
+  @media ${device.desktop}  {
+    width: 550px; 
+  }
   }
   .spinner {
     animation: spin 1s ease-in-out infinite;
