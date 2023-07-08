@@ -196,14 +196,19 @@ export default function Navigation() {
                       <span>Manage reviews</span>
                     </li>
                   </Link>
+                  <Link to='/spots/current'>
+                    <li>
+                      <span>Manage spots</span>
+                    </li>
+                  </Link>
+                  <Link to='/spots/new'>
+                    <li>
+                      <span>Airbnb your home</span>
+                    </li>
+                  </Link>
                 </>
               )}
-              <Link to='/spots/new'>
-                <li>
-                  <span>Airbnb your home</span>
-                </li>
-              </Link>
-              <Link>
+              <Link to='/'>
                 <li>
                   <span>Help</span>
                 </li>

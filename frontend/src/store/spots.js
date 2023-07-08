@@ -4,6 +4,7 @@ import { csrfFetch } from "./csrf";
 const initalState = {
   allSpots: {},
   orderedSpots: [],
+  orderedUserSpots: [],
   orderBy: "default",
 };
 
@@ -11,6 +12,42 @@ const getSpots = (data) => ({
   type: actionTypes.GET_SPOTS,
   payload: data,
 });
+
+const getUserSpots = (data) => ({
+  type: actionTypes.GET_USER_SPOTS,
+  payload: data,
+});
+
+const removeUserSpot = (spotId) => ({
+  type: actionTypes.REMOVE_SPOT,
+  payload: spotId,
+});
+
+export const thunkRemoveUserSpot = (spotId) => async (dispatch) => {
+  try {
+    const res = await csrfFetch(`/api/spots/${spotId}`, {
+      method: "DELETE",
+    });
+    const data = await res.json();
+    dispatch(removeUserSpot(spotId));
+    return data;
+  } catch (err) {
+    console.log("there was an error", err);
+    if (err.json) return await err.json();
+  }
+};
+
+export const thunkGetUserSpots = () => async (dispatch) => {
+  try {
+    const res = await csrfFetch("/api/spots/current");
+    const data = await res.json();
+    dispatch(getUserSpots(data));
+    return data;
+  } catch (err) {
+    console.log("there was an err", err);
+    if (err.json) return await err.json();
+  }
+};
 
 export const thunkGetSpots =
   (paginationData = null) =>
@@ -54,7 +91,40 @@ export const spotsReducer = (state = initalState, action) => {
       newState.allSpots = { ...newState.allSpots };
       newState.allSpots[id] = { ...newState.allSpots[id], preview };
       newState.orderedSpots = [...newState.orderedSpots];
-      newState.orderedSpots[0].preview = preview;
+      const spotIdx = newState.orderedSpots.findIndex((spot) => spot.id == id);
+      if (spotIdx > -1) {
+        newState.orderedSpots[spotIdx].preview = preview;
+      }
+      return newState;
+    }
+    case actionTypes.GET_USER_SPOTS: {
+      const newState = { ...state };
+      const { Spots } = action.payload;
+      newState.orderedUserSpots = [...Spots];
+      return newState;
+    }
+    case actionTypes.REMOVE_SPOT: {
+      const newState = { ...state };
+      newState.orderedUserSpots = newState.orderedUserSpots.filter(
+        (spot) => spot.id !== action.payload
+      );
+      newState.orderedSpots = newState.orderedSpots.filter(
+        (spot) => spot.id !== action.payload
+      );
+      delete newState.allSpots[action.payload];
+      return newState;
+    }
+    case actionTypes.EDIT_SPOT: {
+      const newState = { ...state };
+      newState.allSpots = { ...newState.allSpots };
+      newState.orderedSpots = [...newState.orderedSpots];
+      newState.allSpots[action.payload.id] = action.payload;
+      const spotIdx = newState.orderedSpots.findIndex(
+        (spot) => spot.id === action.payload.id
+      );
+      if (spotIdx) {
+        newState.orderedSpots[spotIdx] = action.payload;
+      }
       return newState;
     }
     default:

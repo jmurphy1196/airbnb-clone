@@ -105,7 +105,7 @@ export const CreateSpotWrapper = styled.div`
     position: absolute;
     left: 100%;
     bottom: 100%;
-    transform: translate(-100%, 150%);
+    transform: translate(-120%, 150%);
   }
   button {
     background-color: ${({ theme }) => theme.primary};

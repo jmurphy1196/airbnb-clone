@@ -13,6 +13,8 @@ import SpotDetails from "./components/spots/SpotDetails";
 import NotFound from "./components/NotFound";
 import CreateSpot from "./components/spots/CreateSpot";
 import ManageReviews from "./components/reviews/ManageReviews";
+import ManageSpots from "./components/spots/ManageSpots";
+import EditSpot from "./components/spots/EditSpot";
 
 function App() {
   const dispatch = useDispatch();
@@ -42,8 +44,14 @@ function App() {
               <Route exact path='/spots/new'>
                 <CreateSpot />
               </Route>
+              <Route exact path='/spots/current'>
+                <ManageSpots />
+              </Route>
               <Route exact path='/spots/:spotId'>
                 <SpotDetails />
+              </Route>
+              <Route exact path='/spots/:spotId/edit'>
+                <EditSpot />
               </Route>
               <Route exact path='/reviews/current'>
                 <ManageReviews />

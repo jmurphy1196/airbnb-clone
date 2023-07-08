@@ -179,6 +179,7 @@ export default function ReviewModal({
               if (activeRating >= val) {
                 return (
                   <FontAwesomeIcon
+                    key={val}
                     icon={faStar}
                     onMouseEnter={() => setActiveRating(val)}
                     onClick={() => setRating(val)}

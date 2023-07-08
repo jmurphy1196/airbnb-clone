@@ -6,15 +6,27 @@ import {
   faUpload,
   faTrash,
   faSpinner,
+  faXmarkCircle,
+  faXmark,
 } from "@fortawesome/free-solid-svg-icons";
-import { thunkPostSpotImages, thunkCreateSpot } from "../../store/singleSpot";
+import {
+  thunkPostSpotImages,
+  thunkGetSpotDetails,
+  deleteSpotImages,
+  thunkEditSpot,
+} from "../../store/singleSpot";
 import { useDispatch } from "react-redux";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import {
+  useHistory,
+  useParams,
+} from "react-router-dom/cjs/react-router-dom.min";
 
-export default function CreateSpot() {
+export default function EditSpot() {
   const dispatch = useDispatch();
   const history = useHistory();
+  const { spotId } = useParams();
   const [images, setImages] = useState([]);
+  const [imagesToDelete, setImagesToDelete] = useState([]);
   const [loading, setLoading] = useState(false);
   const [spotData, setSpotData] = useState({
     address: "",
@@ -37,6 +49,22 @@ export default function CreateSpot() {
   });
   const imgUploadRef = useRef();
 
+  useEffect(() => {
+    (async () => {
+      const data = await dispatch(thunkGetSpotDetails(spotId));
+      setSpotData({
+        address: data.address,
+        city: data.city,
+        country: data.country,
+        state: data.state,
+        price: data.price,
+        description: data.description,
+        name: data.name,
+      });
+      setImages(data.SpotImages);
+    })();
+  }, [dispatch]);
+
   const handleSubmit = async () => {
     setFormTouched({
       address: true,
@@ -49,10 +77,21 @@ export default function CreateSpot() {
     });
     if (!Object.keys(formErrors).length) {
       setLoading(true);
-      const newSpotId = await dispatch(thunkCreateSpot(spotData));
-      const posted = await dispatch(thunkPostSpotImages(newSpotId, images));
-      console.log(posted);
-      history.push(`/spots/${newSpotId}`);
+      if (imagesToDelete.length) {
+        const deletedImgs = await deleteSpotImages(imagesToDelete);
+      }
+      const editedSpot = await dispatch(
+        thunkEditSpot({ ...spotData, id: spotId })
+      );
+      //if new images are being uploaded
+      if (images.length) {
+        await dispatch(thunkPostSpotImages(spotId, images));
+      }
+
+      //   const newSpotId = await dispatch(thunkCreateSpot(spotData));
+      //   const posted = await dispatch(thunkPostSpotImages(newSpotId, images));
+      //   console.log(posted);
+      history.push(`/spots/${spotId}`);
     }
     setLoading(false);
   };
@@ -107,6 +146,7 @@ export default function CreateSpot() {
               onChange={(e) =>
                 setSpotData({ ...spotData, address: e.target.value })
               }
+              value={spotData.address}
             />
           </div>
           <div className='sub-group country'>
@@ -118,6 +158,7 @@ export default function CreateSpot() {
               onChange={(e) =>
                 setSpotData({ ...spotData, country: e.target.value })
               }
+              value={spotData.country}
             >
               <option value={"USA"}>USA</option>
             </select>
@@ -136,6 +177,7 @@ export default function CreateSpot() {
               onChange={(e) =>
                 setSpotData({ ...spotData, city: e.target.value })
               }
+              value={spotData.city}
             />
           </div>
           <div className='sub-group state'>
@@ -147,6 +189,7 @@ export default function CreateSpot() {
               onChange={(e) =>
                 setSpotData({ ...spotData, state: e.target.value })
               }
+              value={spotData.state}
             >
               {VALID_STATES.map((s) => (
                 <option value={s}>{s}</option>
@@ -172,6 +215,7 @@ export default function CreateSpot() {
             onChange={(e) =>
               setSpotData({ ...spotData, description: e.target.value })
             }
+            value={spotData.description}
           ></textarea>
         </div>
         <h2>Create a title for your spot</h2>
@@ -188,6 +232,7 @@ export default function CreateSpot() {
             type='text'
             placeholder='Spot Title'
             onChange={(e) => setSpotData({ ...spotData, name: e.target.value })}
+            value={spotData.name}
           />
         </div>
         <h2>Set a base price for your spot</h2>
@@ -211,16 +256,22 @@ export default function CreateSpot() {
           />
         </div>
         <h2>Upload Photos</h2>
-        <p>1st image will be preview</p>
         <p>(5 max photo upload)</p>
         <div className='image-container'>
           {images.map((image, i) => (
             <div className='image-preview'>
-              <img src={URL.createObjectURL(image)} alt='preview image' />
+              <img
+                src={image.url || URL.createObjectURL(image)}
+                alt='preview image'
+              />
               <FontAwesomeIcon
-                icon={faTrash}
+                icon={faXmarkCircle}
                 color='white'
                 onClick={() => {
+                  if (image.url) {
+                    //image already exists in db.. needs to be deleted
+                    setImagesToDelete([...imagesToDelete, image.id]);
+                  }
                   setImages(images.filter((img, ind) => ind !== i));
                 }}
               />
@@ -256,7 +307,7 @@ export default function CreateSpot() {
           {loading ? (
             <FontAwesomeIcon icon={faSpinner} className='spinner' />
           ) : (
-            "Create a spot"
+            "Edit spot"
           )}
         </button>
       </form>

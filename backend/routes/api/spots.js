@@ -179,9 +179,9 @@ router.get("/current", requireUserLogin, async (req, res) => {
   for (const spot of spots) {
     const formattedSpot = { ...spot.dataValues };
     if (formattedSpot.SpotImages.length) {
-      formattedSpot.previewImage = formattedSpot.SpotImages[0].url;
+      formattedSpot.preview = formattedSpot.SpotImages[0].url;
     } else {
-      formattedSpot.previewImage = null;
+      formattedSpot.preview = null;
     }
     const avgRating =
       formattedSpot.Reviews.reduce((acc, val) => val.stars + acc, 0) /
@@ -410,6 +410,13 @@ router.delete(
   checkUserCanEditSpot,
   async (req, res, next) => {
     //TODO should not be able to delete if a booking is coming up and delete associated bookings
+    const spotImages = await req.spot.getSpotImages();
+    if (spotImages.length) {
+      for (let spotImage of spotImages) {
+        const s3Key = spotImage.url.split("/").slice(3).join("/");
+        await deleteS3Obj(s3Key);
+      }
+    }
     await req.spot.destroy();
     res.json({ message: "Successfully deleted" });
   }

@@ -24,6 +24,7 @@ export default function ReviewList({ reviews, loading, isEdit }) {
       {reviews.map((review) => {
         return (
           <Review
+            key={review.id}
             review={review}
             setActiveReviewId={setActiveReviewId}
             setIsOpen={setIsOpen}

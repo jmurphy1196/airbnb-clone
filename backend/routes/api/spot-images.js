@@ -2,6 +2,7 @@ const router = require("express").Router();
 const { SpotImage, Spot } = require("../../db/models");
 const { ForbiddenError, NotFoundError } = require("../../errors");
 const { checkSpotImageExists } = require("../../middleware");
+const { deleteS3Obj } = require("../../util/s3");
 
 router.delete(
   "/:spotImageId",
@@ -12,9 +13,9 @@ router.delete(
     if (spot.ownerId !== req.user.id) {
       return next(new ForbiddenError("You cannot edit this image"));
     }
-    // const s3Key = spotImages[0].url.split("/").slice(3).join("/");
+    const s3Key = req.spotImage.url.split("/").slice(3).join("/");
     //delete from aws
-    // await deleteS3Obj(s3Key);
+    await deleteS3Obj(s3Key);
     //delete from DB
     await req.spotImage.destroy();
     res.json({ message: "Successfully deleted" });

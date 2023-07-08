@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
 import { Tooltip } from "react-tooltip";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 const SpotCardWrapper = styled.div`
   display: flex;
@@ -32,47 +33,76 @@ const SpotCardWrapper = styled.div`
   }
   span.desc {
     color: ${({ theme }) => theme.light};
+    display: inline-block;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .price {
     color: ${({ theme }) => theme.text};
     font-weight: bold;
   }
+  .buttons {
+    display: flex;
+    gap: 10px;
+  }
+  .buttons button {
+    background-color: ${({ theme }) => theme.light};
+    color: white;
+    padding: 10px;
+    width: 100px;
+  }
 `;
 
-export const SpotCard = ({ spot }) => {
+export const SpotCard = ({ spot, isEdit, setIsOpen, setActiveSpotId }) => {
+  const history = useHistory();
+  const handleDelete = () => {
+    setActiveSpotId(spot.id);
+    setIsOpen(true);
+  };
+  const handleEdit = () => {
+    history.push(`/spots/${spot.id}/edit`);
+  };
   return (
-    <Link to={`/spots/${spot.id}`}>
-      <SpotCardWrapper
-        data-tooltip-id={spot.id}
-        data-tooltip-content={spot.name}
-        data-tooltip-place='top-start'
-      >
+    <SpotCardWrapper
+      data-tooltip-id={spot.id}
+      data-tooltip-content={spot.name}
+      data-tooltip-place='top-start'
+    >
+      <Link to={`/spots/${spot.id}`}>
         <div className='preview'>
           <img
-            src={`${spot.preview != null ? spot.preview : "./stock-house.png"}`}
+            src={`${spot.preview != null ? spot.preview : "/stock-house.png"}`}
             alt='preivew image of spot'
           />
         </div>
-        <div className='details'>
-          <header>
-            <h4>
-              {spot.city}, {spot.state}
-            </h4>
-            <span>
-              {" "}
-              <FontAwesomeIcon icon={faStar} width={15} color='gold' />{" "}
-              {spot.avgRating}
-            </span>
-          </header>
-          <span className='desc'>{spot.description}</span>
-          {/* placeholder */}
-          <span className='desc'>Jul 31 - Aug 5</span>
+      </Link>
+      <div className='details'>
+        <header>
+          <h4>
+            {spot.city}, {spot.state}
+          </h4>
           <span>
-            <span className='price'>${spot.price}</span> / night
+            {" "}
+            <FontAwesomeIcon icon={faStar} width={15} color='gold' />{" "}
+            {spot.avgRating || 0}
           </span>
-          <Tooltip id={spot.id} />
-        </div>
-      </SpotCardWrapper>
-    </Link>
+        </header>
+        <span className='desc'>{spot.description}</span>
+        {/* placeholder */}
+        <span className='desc'>Jul 31 - Aug 5</span>
+        <span>
+          <span className='price'>${spot.price}</span> / night
+        </span>
+        <Tooltip id={spot.id} />
+        {isEdit && (
+          <div className='buttons'>
+            <button onClick={handleDelete}>Delete</button>
+            <button onClick={handleEdit}>Update</button>
+          </div>
+        )}
+      </div>
+    </SpotCardWrapper>
   );
 };

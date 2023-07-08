@@ -24,6 +24,14 @@ const addSpotImages = (data) => ({
   type: actionTypes.CREATE_SPOT_IMAGES,
   payload: data,
 });
+const editSpot = (data) => ({
+  type: actionTypes.EDIT_SPOT,
+  payload: data,
+});
+const editSpotImage = (data) => ({
+  type: actionTypes.EDIT_SPOT_IMAGE,
+  payload: data,
+});
 export const thunkGetSpotDetails = (spotId) => async (dispatch) => {
   try {
     const res = await csrfFetch(`/api/spots/${spotId}`);
@@ -64,6 +72,37 @@ export const thunkCreateSpot = (data) => async (dispatch) => {
   } catch (err) {
     console.log("there was an error", err);
     return err;
+  }
+};
+
+export const deleteSpotImages = async (imgIds) => {
+  try {
+    for (let imgId of imgIds) {
+      const res = await csrfFetch(`/api/spot-images/${imgId}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      console.log("this was the data", data);
+    }
+  } catch (err) {
+    console.log("there was an error", err);
+    if (err.json) return await err.json();
+  }
+};
+
+export const thunkEditSpot = (spotData) => async (dispatch) => {
+  try {
+    const res = await csrfFetch(`/api/spots/${spotData.id}`, {
+      method: "PUT",
+      body: spotData,
+    });
+    const data = await res.json();
+    console.log("this is the data , ", data);
+    dispatch(editSpot(data));
+    return data;
+  } catch (err) {
+    console.log("there was an error", err);
+    if (err.json) return await err.json();
   }
 };
 
