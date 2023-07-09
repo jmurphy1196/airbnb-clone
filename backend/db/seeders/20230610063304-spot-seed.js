@@ -80,11 +80,12 @@ module.exports = {
         },
       },
     });
-    users.forEach(async (usr, i) => {
+    for (let i = 0; i < users.length; i++) {
+      const usr = users[i];
       await usr.createSpot({
         ...spots[i],
       });
-    });
+    }
   },
 
   async down(queryInterface, Sequelize) {

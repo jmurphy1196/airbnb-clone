@@ -22,4 +22,26 @@ router.delete(
   }
 );
 
+router.put("/:spotImageId", [checkSpotImageExists], async (req, res, next) => {
+  const { spotImageId } = req.params;
+  const spot = await Spot.findByPk(req.spotImage.spotId);
+  const spotImages = await spot.getSpotImages({ where: { preview: true } });
+  if (spot.ownerId !== req.user.id) {
+    return next(new ForbiddenError("You cannot edit this image"));
+  }
+  //make sure no other preview image, if there is make it not preview
+  if (spotImages.length > 0) {
+    for (let spotImage of spotImages) {
+      spotImage.preview = false;
+      await spotImage.save();
+    }
+  }
+  req.spotImage.preview = true;
+  await req.spotImage.save();
+  res.json({
+    message: "success edited image preview",
+    data: req.spotImage.url,
+  });
+});
+
 module.exports = router;

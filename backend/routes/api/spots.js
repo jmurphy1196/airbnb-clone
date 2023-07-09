@@ -493,6 +493,17 @@ router.post(
     if (!req.files.length) {
       return next(new BadReqestError("Please upload at least one image"));
     }
+    //if new previewimg delete all other preview imgs
+    if (previewImgInd >= 0) {
+      console.log("...removing old preview image");
+      const spotImages = await req.spot.getSpotImages({
+        where: { preview: true },
+      });
+      for (let spotImage of spotImages) {
+        spotImage.preview = false;
+        await spotImage.save();
+      }
+    }
     const data = [];
     for (let i = 0; i < req.files.length; i++) {
       const file = req.files[i];
