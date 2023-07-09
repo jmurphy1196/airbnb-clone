@@ -31,6 +31,7 @@ export default function Review({
           {[1, 2, 3, 4, 5].map((val) => {
             return (
               <FontAwesomeIcon
+                key={val}
                 icon={review.stars >= val ? faStar : faStarEmpty}
                 width={20}
                 color='gold'

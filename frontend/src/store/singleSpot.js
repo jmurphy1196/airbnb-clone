@@ -113,7 +113,7 @@ export const thunkEditSpotImage = (spotImageId, spotId) => async (dispatch) => {
       method: "PUT",
     });
     const data = await res.json();
-    dispatch(editSpotImage({ spotId, spotImageId }));
+    dispatch(editSpotImage({ spotId, url: data.data }));
     return data;
   } catch (err) {
     console.log("there was an err ", err);

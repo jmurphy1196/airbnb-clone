@@ -127,6 +127,15 @@ export const spotsReducer = (state = initalState, action) => {
       }
       return newState;
     }
+    case actionTypes.EDIT_SPOT_IMAGE: {
+      const newState = { ...state, orderedSpots: [...state.orderedSpots] };
+      const { spotId, url } = action.payload;
+      const spotIdx = newState.orderedSpots.findIndex(
+        (spot) => spot.id == spotId
+      );
+      newState.orderedSpots[spotIdx].preview = url;
+      return newState;
+    }
     default:
       return state;
   }

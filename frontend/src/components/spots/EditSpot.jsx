@@ -48,6 +48,7 @@ export default function EditSpot() {
     price: false,
     description: false,
     name: false,
+    images: false,
   });
   const imgUploadRef = useRef();
 
@@ -76,6 +77,7 @@ export default function EditSpot() {
       price: true,
       description: true,
       name: true,
+      images: true,
     });
     if (!Object.keys(formErrors).length) {
       setLoading(true);
@@ -94,13 +96,15 @@ export default function EditSpot() {
             //image is in db but is not preview, need to make it the preview image
             await dispatch(thunkEditSpotImage(images[previewImg].id, spotId));
           }
-          await dispatch(
-            thunkPostSpotImages(
-              spotId,
-              images.filter((img) => !img.url),
-              -1
-            )
-          );
+          if (images.filter((img) => !img.url).length) {
+            await dispatch(
+              thunkPostSpotImages(
+                spotId,
+                images.filter((img) => !img.url),
+                -1
+              )
+            );
+          }
         } else {
           //image needs to be marked preview
           const imagesInDb = images.filter((img) => img.url);
@@ -143,9 +147,12 @@ export default function EditSpot() {
     if (spotData.name.length < 2) {
       errors.name = "title must be at least 2 characters long";
     }
+    if (images.length < 2) {
+      errors.images = "Please upload at least 2 images";
+    }
 
     setFormErrors(errors);
-  }, [spotData]);
+  }, [spotData, images]);
 
   return (
     <CreateSpotWrapper>
@@ -273,6 +280,7 @@ export default function EditSpot() {
         <div className='form-group'>
           $
           <input
+            step='.01'
             id='price'
             type='number'
             min={1}
@@ -285,6 +293,7 @@ export default function EditSpot() {
         <h2>Upload Photos</h2>
         <p>Click the photo to mark as preview</p>
         <p>(5 max photo upload 2MB)</p>
+        {formErrors?.images && <p className='error'>{formErrors.images}</p>}
         <div className='image-container'>
           {images.map((image, i) => (
             <div
@@ -311,6 +320,7 @@ export default function EditSpot() {
             </div>
           ))}
           <div
+            id='images'
             className='upload-btn'
             onClick={() => {
               imgUploadRef.current.click();

@@ -35,6 +35,7 @@ export default function CreateSpot() {
     price: false,
     description: false,
     name: false,
+    images: false,
   });
   const imgUploadRef = useRef();
 
@@ -47,6 +48,7 @@ export default function CreateSpot() {
       price: true,
       description: true,
       name: true,
+      images: true,
     });
     if (!Object.keys(formErrors).length) {
       setLoading(true);
@@ -80,9 +82,12 @@ export default function CreateSpot() {
     if (spotData.name.length < 5) {
       errors.name = "title must be at least 5 characters long";
     }
+    if (images.length < 2) {
+      errors.images = "please upload at least 2 images";
+    }
 
     setFormErrors(errors);
-  }, [spotData]);
+  }, [spotData, images]);
 
   return (
     <CreateSpotWrapper>
@@ -204,6 +209,7 @@ export default function CreateSpot() {
         <div className='form-group'>
           $
           <input
+            step='.01'
             id='price'
             type='number'
             min={1}
@@ -216,6 +222,7 @@ export default function CreateSpot() {
         <h2>Upload Photos</h2>
         <p>1st image will be preview</p>
         <p>(5 max photo upload, click to select as preview image)</p>
+        {formErrors?.images && <p className='error'>{formErrors.images}</p>}
         <div className='image-container'>
           {images.map((image, i) => (
             <div
@@ -238,6 +245,7 @@ export default function CreateSpot() {
             </div>
           ))}
           <div
+            id='images'
             className='upload-btn'
             onClick={() => {
               imgUploadRef.current.click();

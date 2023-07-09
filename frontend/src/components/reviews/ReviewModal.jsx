@@ -106,7 +106,7 @@ export default function ReviewModal({
       const res = await dispatch(
         thunkCreateReview(spotId, user, { review, stars: rating })
       );
-      if (res.title) {
+      if (res?.title) {
         //there was an error
         setValidationErrors({ ...validationErrors, review: res.title });
       } else {
@@ -121,7 +121,7 @@ export default function ReviewModal({
     const res = await dispatch(
       thunkEditReview({ id: existingReview.id, review, stars: rating }, user)
     );
-    if (!res.title) {
+    if (!res?.title) {
       //no error
       onRequestClose();
     }
@@ -189,6 +189,7 @@ export default function ReviewModal({
               }
               return (
                 <FontAwesomeIcon
+                  key={val}
                   icon={faEmptyStar}
                   onMouseEnter={() => setActiveRating(val)}
                   onClick={() => setRating(val)}
