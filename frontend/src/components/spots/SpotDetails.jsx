@@ -62,7 +62,7 @@ export default function SpotDetails() {
           <div className='spot-pricing'>
             <header>
               <span>
-                <strong>${spot.price.toFixed(2)}</strong>/ night
+                <strong>${spot?.price?.toFixed(2)}</strong>/ night
               </span>
               <span>
                 <FontAwesomeIcon icon={faStar} width={20} color='gold' />
