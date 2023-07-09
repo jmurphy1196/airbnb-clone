@@ -106,6 +106,7 @@ export default function LoginModal({
     setError,
     watch,
   } = useForm();
+  console.log("these are the errors", errors);
 
   const submitHandler = async ({
     credential,
@@ -165,7 +166,7 @@ export default function LoginModal({
 
   const handleFormType = () => {
     reset();
-    setFormType();
+    setFormType(formType === "login" ? "signup" : "login");
   };
 
   return (
@@ -180,12 +181,7 @@ export default function LoginModal({
     >
       <ModalWrapper>
         {formType === "login" ? (
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleSubmit(submitHandler);
-            }}
-          >
+          <form onSubmit={handleSubmit(submitHandler)}>
             <header>
               <FontAwesomeIcon icon={faCircleXmark} onClick={onRequestClose} />
               <h2>Login or sign up</h2>
