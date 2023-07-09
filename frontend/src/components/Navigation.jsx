@@ -3,7 +3,7 @@ import { styled } from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserCircle, faBars } from "@fortawesome/free-solid-svg-icons";
 import { useTheme } from "styled-components";
-import { Link } from "react-router-dom/cjs/react-router-dom.min";
+import { Link, useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import LoginModal from "./session/LoginModal";
 import { useSelector, useDispatch } from "react-redux";
 import { thunkRemoveSession } from "../store/session";
@@ -51,6 +51,8 @@ const NavbarContainer = styled.nav`
   }
   .menu {
     position: relative;
+    display: flex;
+    gap: 20px;
   }
   .menu button {
     display: flex;
@@ -113,6 +115,7 @@ const NavbarContainer = styled.nav`
 `;
 
 export default function Navigation() {
+  const { pathname } = useLocation();
   const theme = useTheme();
   const user = useSelector((state) => state.session.user);
   const history = useHistory();
@@ -123,9 +126,14 @@ export default function Navigation() {
     type: "login",
   });
   const btnRef = useRef(null);
+  const subRef = useRef(null);
   useEffect(() => {
     function handleClickOutside(event) {
-      if (btnRef.current && !btnRef.current.contains(event.target)) {
+      if (
+        btnRef.current &&
+        btnRef.current.contains(subRef.current) &&
+        event.target.contains(subRef.current)
+      ) {
         if (submenuActive) setSubmenuActive(false);
       }
     }
@@ -134,6 +142,9 @@ export default function Navigation() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [btnRef, submenuActive, setSubmenuActive]);
+  useEffect(() => {
+    setSubmenuActive(false);
+  }, [pathname]);
   const handleSignout = async () => {
     const res = await dispatch(thunkRemoveSession());
     history.push("/");
@@ -149,17 +160,17 @@ export default function Navigation() {
           <h1>airbnb</h1>
         </Link>
       </div>
-      <div
-        className='menu'
-        onClick={() => setSubmenuActive(!submenuActive)}
-        ref={btnRef}
-      >
-        <button className={`menu-btn ${submenuActive && "sub-active"}`}>
+      <div className='menu' ref={btnRef}>
+        {user && <Link to='/spots/new'>Create a new spot</Link>}
+        <button
+          className={`menu-btn ${submenuActive && "sub-active"}`}
+          onClick={() => setSubmenuActive(!submenuActive)}
+        >
           <FontAwesomeIcon icon={faBars} color={theme.text} />
           <FontAwesomeIcon icon={faUserCircle} color={theme.text} />
         </button>
         {submenuActive && (
-          <div className='sub-menu'>
+          <div className='sub-menu' ref={subRef}>
             {user?.firstName && <p>Hello, {user.firstName}</p>}
             <ul>
               {!user && (
