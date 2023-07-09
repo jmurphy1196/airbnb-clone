@@ -105,6 +105,7 @@ export default function LoginModal({
     reset,
     setError,
     watch,
+    setValue,
   } = useForm();
   console.log("these are the errors", errors);
 
@@ -153,6 +154,9 @@ export default function LoginModal({
   const loginDemoUser = async () => {
     //hacky way of doing this. Only closing modal early beacuse errors show up on form otherwise. it thinks the inputs were touched when i click demo user.
     // onRequestClose();
+    setValue("credential", "Demo-lition");
+    setValue("password", "password");
+
     const data = await dispatch(
       thunkSetSession({ credential: "Demo-lition", password: "password" })
     );
