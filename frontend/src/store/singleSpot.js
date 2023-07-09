@@ -106,30 +106,50 @@ export const thunkEditSpot = (spotData) => async (dispatch) => {
   }
 };
 
-export const thunkPostSpotImages = (spotId, images) => async (dispatch) => {
+export const thunkEditSpotImage = (spotImageId, spotId) => async (dispatch) => {
   try {
-    const formData = new FormData();
-    for (let img of images) {
-      formData.append("images[]", img);
-    }
-    const res = await csrfFetch(
-      `/api/spots/${spotId}/images/array?previewImgInd=0`,
-      {
-        method: "POST",
-        body: formData,
-      },
-      true
-    );
+    //will make spotimage id the new preview img
+    const res = await csrfFetch(`/api/spot-images/${spotImageId}`, {
+      method: "PUT",
+    });
     const data = await res.json();
-    dispatch(
-      addSpotImages({ preview: URL.createObjectURL(images[0]), id: spotId })
-    );
+    dispatch(editSpotImage({ spotId, spotImageId }));
     return data;
   } catch (err) {
-    console.log("there was an error", err);
-    return err;
+    console.log("there was an err ", err);
+    if (err.json) return await err.json();
   }
 };
+
+export const thunkPostSpotImages =
+  (spotId, images, previewInd = 0) =>
+  async (dispatch) => {
+    try {
+      const formData = new FormData();
+      for (let img of images) {
+        formData.append("images[]", img);
+      }
+      const res = await csrfFetch(
+        `/api/spots/${spotId}/images/array?previewImgInd=${previewInd}`,
+        {
+          method: "POST",
+          body: formData,
+        },
+        true
+      );
+      const data = await res.json();
+      dispatch(
+        addSpotImages({
+          preview: URL.createObjectURL(images[previewInd]),
+          id: spotId,
+        })
+      );
+      return data;
+    } catch (err) {
+      console.log("there was an error", err);
+      return err;
+    }
+  };
 export const singleSpotReducer = (state = initalState, action) => {
   switch (action.type) {
     case actionTypes.GET_SPOT_DETAILS: {

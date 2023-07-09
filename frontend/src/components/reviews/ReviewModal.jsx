@@ -35,13 +35,11 @@ const ModalWrapper = styled.div`
   }
   form header h2 {
     flex: 0 1 auto;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
   }
   form header svg {
-    flex: 0 1 auto;
-    margin-right: auto;
+    position: absolute;
+    right: 100%;
+    transform: translateX(100%);
   }
 
   form button {
@@ -133,11 +131,13 @@ export default function ReviewModal({
     <Modal
       isOpen={isOpen}
       onRequestClose={() => {
-        setLoading(false);
-        setValidationErrors({});
-        setRating(0);
-        setActiveRating(0);
-        setReview("");
+        if (!isEdit) {
+          setLoading(false);
+          setValidationErrors({});
+          setRating(0);
+          setActiveRating(0);
+          setReview("");
+        }
         onRequestClose();
       }}
       contentLabel='Login modal'

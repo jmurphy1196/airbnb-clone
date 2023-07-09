@@ -119,4 +119,9 @@ export const CreateSpotWrapper = styled.div`
   p.error {
     color: red;
   }
+  .preview-img {
+    border: 2px solid ${({ theme }) => theme.primary};
+    border-radius: 5px;
+    overflow: hidden;
+  }
 `;

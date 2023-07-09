@@ -20,6 +20,9 @@ export default function SpotDetails() {
   const spot = useSelector((state) =>
     state.singleSpot.id == spotId ? state.singleSpot : null
   );
+  const spotImageOrder = useSelector((state) =>
+    state.singleSpot.spotImages.sort((a, b) => b.preview - a.preview)
+  );
   const reviews = useSelector((state) => state.singleSpot.Reviews || []);
 
   //replace w/ loading screen
@@ -42,11 +45,11 @@ export default function SpotDetails() {
       </header>
       <div className='spot-images'>
         <div className='image main-image'>
-          <img src={spot.spotImages[0]?.url || "/stock-house.png"} alt='' />
+          <img src={spotImageOrder[0]?.url || "/stock-house.png"} alt='' />
         </div>
         {[1, 2, 3, 4].map((val) => (
           <div key={val} className='image sub-image'>
-            <img src={spot.spotImages[val]?.url || "/stock-house.png"} alt='' />
+            <img src={spotImageOrder[val]?.url || "/stock-house.png"} alt='' />
           </div>
         ))}
       </div>

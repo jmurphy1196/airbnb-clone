@@ -4,6 +4,7 @@ import { faStar } from "@fortawesome/free-solid-svg-icons";
 import { Tooltip } from "react-tooltip";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { device } from "../../theme";
 
 const SpotCardWrapper = styled.div`
   display: flex;
@@ -19,6 +20,17 @@ const SpotCardWrapper = styled.div`
     border-radius: 15px;
     height: 300px;
     border: 1px solid ${({ theme }) => theme.toggleBorder};
+    @media ${device.mobile} {
+      height: 300px;
+    }
+    @media ${device.tablet} {
+    }
+    @media ${device.laptop} {
+      height: 250px;
+    }
+    @media ${device.desktop} {
+      height: 300px;
+    }
   }
   .details {
     display: flex;

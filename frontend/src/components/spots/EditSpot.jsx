@@ -14,6 +14,7 @@ import {
   thunkGetSpotDetails,
   deleteSpotImages,
   thunkEditSpot,
+  thunkEditSpotImage,
 } from "../../store/singleSpot";
 import { useDispatch } from "react-redux";
 import {
@@ -26,6 +27,7 @@ export default function EditSpot() {
   const history = useHistory();
   const { spotId } = useParams();
   const [images, setImages] = useState([]);
+  const [previewImg, setPreviewImg] = useState(0);
   const [imagesToDelete, setImagesToDelete] = useState([]);
   const [loading, setLoading] = useState(false);
   const [spotData, setSpotData] = useState({
@@ -61,7 +63,7 @@ export default function EditSpot() {
         description: data.description,
         name: data.name,
       });
-      setImages(data.SpotImages);
+      setImages(data.SpotImages.sort((a, b) => b.preview - a.preview));
     })();
   }, [dispatch]);
 
@@ -85,7 +87,32 @@ export default function EditSpot() {
       );
       //if new images are being uploaded
       if (images.length) {
-        await dispatch(thunkPostSpotImages(spotId, images));
+        //previewInd
+        if (images[previewImg]?.url) {
+          //image is already preview in db
+          if (images[previewImg].preview === false) {
+            //image is in db but is not preview, need to make it the preview image
+            await dispatch(thunkEditSpotImage(images[previewImg].id, spotId));
+          }
+          await dispatch(
+            thunkPostSpotImages(
+              spotId,
+              images.filter((img) => !img.url),
+              -1
+            )
+          );
+        } else {
+          //image needs to be marked preview
+          const imagesInDb = images.filter((img) => img.url);
+          let newPreviewInd = previewImg - imagesInDb.length;
+          await dispatch(
+            thunkPostSpotImages(
+              spotId,
+              images.filter((img) => !img.url),
+              newPreviewInd
+            )
+          );
+        }
       }
 
       //   const newSpotId = await dispatch(thunkCreateSpot(spotData));
@@ -256,10 +283,16 @@ export default function EditSpot() {
           />
         </div>
         <h2>Upload Photos</h2>
-        <p>(5 max photo upload)</p>
+        <p>Click the photo to mark as preview</p>
+        <p>(5 max photo upload 2MB)</p>
         <div className='image-container'>
           {images.map((image, i) => (
-            <div className='image-preview'>
+            <div
+              className={`image-preview ${previewImg === i && "preview-img"}`}
+              onClick={() => {
+                setPreviewImg(i);
+              }}
+            >
               <img
                 src={image.url || URL.createObjectURL(image)}
                 alt='preview image'

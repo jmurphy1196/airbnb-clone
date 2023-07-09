@@ -22,6 +22,10 @@ export const SpotsWrapper = styled.div`
     grid-template-columns: repeat(3, minmax(180px, 1fr));
     padding: 0 50px;
   }
+  @media ${device.xlLaptop} {
+    grid-template-columns: repeat(4, minmax(180px, 1fr));
+    padding: 0 50px;
+  }
   @media ${device.desktop} {
     grid-template-columns: repeat(6, minmax(180px, 1fr));
   }

@@ -5,8 +5,19 @@ export const SpotDetailsWrapper = styled.div`
   display: flex;
   height: 100%;
   flex-direction: column;
-  padding: 0 30px;
   gap: 20px;
+  @media ${device.mobile} {
+    padding: 0;
+  }
+  @media ${device.tablet} {
+    padding: 0 50px;
+  }
+  @media ${device.laptop} {
+    padding: 0 75px;
+  }
+  @media ${device.desktop} {
+    padding: 0 100px;
+  }
   .spot-images {
     display: grid;
     grid-template-columns: repeat(4, minmax(180px, 1fr));
@@ -21,9 +32,11 @@ export const SpotDetailsWrapper = styled.div`
     }
     @media ${device.laptop} {
       grid-template-columns: repeat(4, minmax(180px, 1fr));
+      grid-template-rows: repeat(2, minmax(250px, 250px));
     }
     @media ${device.desktop} {
       grid-template-columns: repeat(4, minmax(180px, 1fr));
+      grid-template-rows: repeat(2, minmax(250px, 400px));
     }
   }
   img {
@@ -89,6 +102,7 @@ export const SpotDetailsWrapper = styled.div`
     @media only screen and (max-width: ${size.laptop}) {
       width: 100%;
       justify-content: center;
+      margin-top: 10px;
     }
   }
   .spot-pricing {
@@ -130,5 +144,8 @@ export const SpotDetailsWrapper = styled.div`
     color: ${({ theme }) => theme.background};
     font-size: 1.3rem;
     border-radius: 2px;
+    @media only screen and (max-width: ${size.laptop}) {
+      margin-top: 20px;
+    }
   }
 `;

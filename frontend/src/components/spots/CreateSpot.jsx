@@ -4,8 +4,8 @@ import { VALID_STATES } from "../../constants";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUpload,
-  faTrash,
   faSpinner,
+  faXmarkCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import { thunkPostSpotImages, thunkCreateSpot } from "../../store/singleSpot";
 import { useDispatch } from "react-redux";
@@ -25,6 +25,7 @@ export default function CreateSpot() {
     description: "",
     name: "",
   });
+  const [previewImg, setPreviewImg] = useState(0);
   const [formErrors, setFormErrors] = useState({});
   const [formTouched, setFormTouched] = useState({
     address: false,
@@ -50,7 +51,9 @@ export default function CreateSpot() {
     if (!Object.keys(formErrors).length) {
       setLoading(true);
       const newSpotId = await dispatch(thunkCreateSpot(spotData));
-      const posted = await dispatch(thunkPostSpotImages(newSpotId, images));
+      const posted = await dispatch(
+        thunkPostSpotImages(newSpotId, images, previewImg)
+      );
       console.log(posted);
       history.push(`/spots/${newSpotId}`);
     }
@@ -74,8 +77,8 @@ export default function CreateSpot() {
     if (spotData.description.length < 20) {
       errors.description = "description must be at least 20 characters";
     }
-    if (spotData.name.length < 2) {
-      errors.name = "title must be at least 2 characters long";
+    if (spotData.name.length < 5) {
+      errors.name = "title must be at least 5 characters long";
     }
 
     setFormErrors(errors);
@@ -212,15 +215,23 @@ export default function CreateSpot() {
         </div>
         <h2>Upload Photos</h2>
         <p>1st image will be preview</p>
-        <p>(5 max photo upload)</p>
+        <p>(5 max photo upload, click to select as preview image)</p>
         <div className='image-container'>
           {images.map((image, i) => (
-            <div className='image-preview'>
+            <div
+              className={`image-preview ${previewImg === i && "preview-img"}`}
+              onClick={() => {
+                setPreviewImg(i);
+              }}
+            >
               <img src={URL.createObjectURL(image)} alt='preview image' />
               <FontAwesomeIcon
-                icon={faTrash}
+                icon={faXmarkCircle}
                 color='white'
                 onClick={() => {
+                  if (previewImg === i) {
+                    setPreviewImg(0);
+                  }
                   setImages(images.filter((img, ind) => ind !== i));
                 }}
               />
