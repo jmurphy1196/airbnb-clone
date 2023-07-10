@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { thunkSetSession } from "../../store/session";
@@ -107,7 +107,10 @@ export default function LoginModal({
     watch,
     setValue,
   } = useForm();
-  console.log("these are the errors", errors);
+
+  useEffect(() => {
+    register("credential", { required: formType === "login" });
+  }, [formType]);
 
   const submitHandler = async ({
     credential,
@@ -211,7 +214,7 @@ export default function LoginModal({
               type='text'
               className={`${errors.credential && "error"}`}
               {...register("credential", {
-                required: true,
+                required: formType === "login" ? true : false,
               })}
             />
             <input
