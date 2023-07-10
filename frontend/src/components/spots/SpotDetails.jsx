@@ -71,8 +71,8 @@ export default function SpotDetails() {
                   : "New"}
               </span>
               <span>
-                {spot.reviewCount !== null ? spot.reviewCount : 0}{" "}
-                {spot.reviewCount !== null ? "Reviews" : "Review"}
+                {spot.reviewCount > 0 ? spot.reviewCount : 0}{" "}
+                {spot.reviewCount > 0 ? "Reviews" : "Review"}
               </span>
             </header>
             <button onClick={() => alert("feature coming soon...")}>
