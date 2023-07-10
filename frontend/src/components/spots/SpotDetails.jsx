@@ -70,7 +70,10 @@ export default function SpotDetails() {
                   ? Number(spot.avgStarRating).toFixed(1)
                   : "New"}
               </span>
-              <span>{spot.reviewCount && spot.reviewCount} reviews</span>
+              <span>
+                {spot.reviewCount ? spot.reviewCount : 0}{" "}
+                {spot.reviewCount ? "Reviews" : "Review"}
+              </span>
             </header>
             <button onClick={() => alert("feature coming soon...")}>
               Reserve
