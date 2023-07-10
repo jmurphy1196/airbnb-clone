@@ -64,9 +64,11 @@ export default function SpotDetails() {
               <span>
                 <strong>${spot?.price}</strong>/ night
               </span>
-              <span>
+              <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
                 <FontAwesomeIcon icon={faStar} width={20} color='gold' />
-                {spot.avgStarRating}
+                {Number(spot.avgStarRating).toFixed(1) != 0.0
+                  ? Number(spot.avgStarRating).toFixed(1)
+                  : "New"}
               </span>
               <span>{spot.reviewCount && spot.reviewCount} reviews</span>
             </header>

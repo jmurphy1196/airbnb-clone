@@ -43,6 +43,9 @@ export const Globalstyle = createGlobalStyle`
   svg:hover {
     cursor: pointer;
   }
+  textarea {
+    font-family: Airbnb, "Inter";
+  }
 
   /* modal style */
   .ReactModal__Content{

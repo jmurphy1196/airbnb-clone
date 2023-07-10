@@ -95,17 +95,20 @@ export const SpotCard = ({ spot, isEdit, setIsOpen, setActiveSpotId }) => {
           <h4>
             {spot.city}, {spot.state}
           </h4>
-          <span>
+          <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
             {" "}
             <FontAwesomeIcon icon={faStar} width={15} color='gold' />{" "}
-            {spot.avgRating || 0}
+            {Number(spot.avgRating).toFixed(1) != 0.0
+              ? Number(spot.avgRating).toFixed(1)
+              : "New"}
           </span>
         </header>
         <span className='desc'>{spot.description}</span>
         {/* placeholder */}
         <span className='desc'>Jul 31 - Aug 5</span>
         <span>
-          <span className='price'>${spot.price}</span> / night
+          <span className='price'>${Number(spot.price).toFixed(2)}</span> /
+          night
         </span>
         <Tooltip id={spot.id} />
         {isEdit && (
