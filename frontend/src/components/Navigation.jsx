@@ -8,6 +8,7 @@ import LoginModal from "./session/LoginModal";
 import { useSelector, useDispatch } from "react-redux";
 import { thunkRemoveSession } from "../store/session";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { device } from "../theme";
 
 const NavbarContainer = styled.nav`
   width: 100%;
@@ -16,6 +17,23 @@ const NavbarContainer = styled.nav`
   display: flex;
   padding: 0 5%;
   justify-content: space-between;
+  #create-spot-link {
+    @media ${device.mobile} {
+      display: none;
+    }
+    @media ${device.tablet} {
+      display: none;
+    }
+    @media ${device.laptop} {
+      display: flex;
+    }
+    @media ${device.xlLaptop} {
+      display: flex;
+    }
+    @media ${device.desktop} {
+      display: flex;
+    }
+  }
   div {
     display: flex;
     align-items: center;
@@ -161,7 +179,11 @@ export default function Navigation() {
         </Link>
       </div>
       <div className='menu' ref={btnRef}>
-        {user && <Link to='/spots/new'>Create a new spot</Link>}
+        {user && (
+          <Link to='/spots/new' id='create-spot-link'>
+            Create a new spot
+          </Link>
+        )}
         <button
           className={`menu-btn ${submenuActive && "sub-active"}`}
           onClick={() => setSubmenuActive(!submenuActive)}

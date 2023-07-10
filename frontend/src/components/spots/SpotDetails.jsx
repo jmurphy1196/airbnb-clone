@@ -70,7 +70,9 @@ export default function SpotDetails() {
               </span>
               <span>{spot.reviewCount && spot.reviewCount} reviews</span>
             </header>
-            <button>Reserve</button>
+            <button onClick={() => alert("feature coming soon...")}>
+              Reserve
+            </button>
           </div>
         </div>
       </div>
