@@ -79,6 +79,9 @@ export default function CreateSpot() {
     if (spotData.description.length < 20) {
       errors.description = "description must be at least 20 characters";
     }
+    if (spotData.description.length > 200) {
+      errors.description = "description must be at fewer than 200 characters";
+    }
     if (spotData.name.length < 5) {
       errors.name = "title must be at least 5 characters long";
     }
