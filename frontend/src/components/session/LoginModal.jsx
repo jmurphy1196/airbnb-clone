@@ -106,6 +106,7 @@ export default function LoginModal({
     setError,
     watch,
     setValue,
+    formState,
   } = useForm();
 
   useEffect(() => {
@@ -304,7 +305,14 @@ export default function LoginModal({
               className={`${errors.lastName && "error"}`}
               {...register("lastName", { required: true })}
             />
-            <button type='submit'>Signup</button>
+            <button
+              type='submit'
+              disabled={
+                loading || Object.keys(formState.touchedFields).length === 0
+              }
+            >
+              Signup
+            </button>
             <div className='border'>
               <div className='item-1'></div>
               <div className='item-2'>or</div>

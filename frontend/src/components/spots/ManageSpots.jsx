@@ -4,6 +4,7 @@ import { thunkGetUserSpots } from "../../store/spots";
 import { SpotsWrapper } from "./SpotsWrapper";
 import { SpotCard } from "./SpotCard";
 import DeleteSpotModal from "./SpotDeleteModal";
+import { Link } from "react-router-dom/cjs/react-router-dom.min";
 
 export default function ManageSpots() {
   const dispatch = useDispatch();
@@ -17,23 +18,35 @@ export default function ManageSpots() {
     })();
   }, [dispatch]);
   return (
-    <SpotsWrapper>
-      {userSpots.map((spot) => {
-        return (
-          <SpotCard
-            key={spot.id}
-            spot={spot}
-            isEdit
-            setActiveSpotId={setActiveSpotId}
-            setIsOpen={setIsOpen}
+    <>
+      {/* TODO fix this up */}
+      <h2 className='header' style={{ marginLeft: 50 }}>
+        Manage Spots
+      </h2>
+      {userSpots.length ? (
+        <SpotsWrapper>
+          {userSpots.map((spot) => {
+            return (
+              <SpotCard
+                key={spot.id}
+                spot={spot}
+                isEdit
+                setActiveSpotId={setActiveSpotId}
+                setIsOpen={setIsOpen}
+              />
+            );
+          })}
+          <DeleteSpotModal
+            isOpen={isOpen}
+            onRequestClose={() => setIsOpen(false)}
+            spotId={activeSpotId}
           />
-        );
-      })}
-      <DeleteSpotModal
-        isOpen={isOpen}
-        onRequestClose={() => setIsOpen(false)}
-        spotId={activeSpotId}
-      />
-    </SpotsWrapper>
+        </SpotsWrapper>
+      ) : (
+        <Link to='/spots/new' style={{ marginLeft: 50 }}>
+          Create a spot
+        </Link>
+      )}
+    </>
   );
 }

@@ -86,6 +86,9 @@ export default function SpotDetails() {
           Post a review
         </button>
       )}
+      {!reviews.length && user && user.id != spot.ownerId && (
+        <p>Be the first to post a review! </p>
+      )}
       {loadingReviews ? (
         <ReviewList loading={true} />
       ) : (
