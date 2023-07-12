@@ -15,6 +15,8 @@ import CreateSpot from "./components/spots/CreateSpot";
 import ManageReviews from "./components/reviews/ManageReviews";
 import ManageSpots from "./components/spots/ManageSpots";
 import EditSpot from "./components/spots/EditSpot";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/all";
 
 function App() {
   const dispatch = useDispatch();
@@ -29,6 +31,7 @@ function App() {
       await dispatch(thunkGetSession());
       setLoading(false);
     })();
+    gsap.registerPlugin(ScrollTrigger);
   }, [dispatch]);
   return (
     <>

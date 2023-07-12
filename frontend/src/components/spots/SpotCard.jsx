@@ -1,10 +1,13 @@
 import { styled } from "styled-components";
+import { useRef, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
 import { Tooltip } from "react-tooltip";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { device } from "../../theme";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 const SpotCardWrapper = styled.div`
   display: flex;
@@ -68,6 +71,7 @@ const SpotCardWrapper = styled.div`
 `;
 
 export const SpotCard = ({ spot, isEdit, setIsOpen, setActiveSpotId }) => {
+  const cardRef = useRef(null);
   const history = useHistory();
   const handleDelete = () => {
     setActiveSpotId(spot.id);
@@ -76,11 +80,23 @@ export const SpotCard = ({ spot, isEdit, setIsOpen, setActiveSpotId }) => {
   const handleEdit = () => {
     history.push(`/spots/${spot.id}/edit`);
   };
+  useEffect(() => {
+    const card = cardRef.current;
+    gsap.set(card, { opacity: 0 });
+
+    ScrollTrigger.create({
+      trigger: card,
+      start: "top 90%",
+      onEnter: () =>
+        gsap.to(card, { opacity: 1, duration: 0.8, ease: "power2.inOut" }),
+    });
+  }, []);
   return (
     <SpotCardWrapper
       data-tooltip-id={spot.id}
       data-tooltip-content={spot.name}
       data-tooltip-place='top-start'
+      ref={cardRef}
     >
       <Link to={`/spots/${spot.id}`}>
         <div className='preview'>
