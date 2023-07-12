@@ -24,6 +24,10 @@ export const Globalstyle = createGlobalStyle`
     padding: 0;
     margin: 0;
   }
+  button[disabled] {
+    pointer-events: none;
+    filter: brightness(75%);
+  }
   button:hover {
     cursor: pointer;
   }

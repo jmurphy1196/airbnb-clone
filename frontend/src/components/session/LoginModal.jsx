@@ -83,10 +83,6 @@ const ModalWrapper = styled.div`
   #demo-btn {
     background-color: ${({ theme }) => theme.secondary};
   }
-  button[disabled] {
-    pointer-events: none;
-    filter: brightness(95%);
-  }
 `;
 
 export default function LoginModal({
@@ -97,75 +93,103 @@ export default function LoginModal({
 }) {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-    setError,
-    watch,
-    setValue,
-    formState,
-  } = useForm();
-
+  const [formData, setFormData] = useState({
+    credential: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    firstName: "",
+    lastName: "",
+    username: "",
+  });
+  const [formTouched, setFormTouched] = useState({});
+  const [formErrors, setFormErrors] = useState({});
   useEffect(() => {
-    register("credential", { required: formType === "login" });
-  }, [formType]);
+    const errors = {};
+    if (formType === "login") {
+      if (formData.credential.length < 4) {
+        errors.credential = "credential must be at least 4 characters";
+      }
+      if (formData.password.length < 6) {
+        errors.password = "password must be at least 6 characters";
+      }
+    } else {
+      if (
+        formData.password !== formData.confirmPassword &&
+        formType === "signup"
+      ) {
+        errors.confirmPassword = "passwords do not match";
+      }
+      if (formData.firstName.trim() === "") {
+        errors.firstName = "First name cannot be empty";
+      }
+      if (formData.lastName.trim() === "") {
+        errors.firstName = "Last name cannot be empty";
+      }
+    }
 
-  const submitHandler = async ({
-    credential,
-    password,
-    username,
-    firstName,
-    lastName,
-    email,
-  }) => {
+    setFormErrors(errors);
+  }, [formData]);
+
+  const submitHandler = async (e) => {
+    e.preventDefault();
     setLoading(true);
     if (formType === "login") {
-      const data = await dispatch(thunkSetSession({ credential, password }));
+      const data = await dispatch(
+        thunkSetSession({
+          credential: formData.credential,
+          password: formData.password,
+        })
+      );
       setLoading(false);
       if (data.errors && data.errors.credential) {
-        setError("login", { type: "custom", message: data.errors.credential });
+        //handle error here
+        if (data.errors.credential) {
+          setFormErrors({ ...formErrors, credential: data.errors.credential });
+        }
       } else {
+        clearFormData();
         onRequestClose();
       }
     } else if (formType === "signup") {
       //signup logic here
-      const data = await dispatch(
-        thunkCreateUser({ email, username, password, firstName, lastName })
-      );
+      const data = await dispatch(thunkCreateUser({ ...formData }));
       setLoading(false);
       if (data.errors) {
-        if (data.errors.username)
-          setError("username", {
-            type: "custom",
-            message: data.errors.username,
-          });
-        if (data.errors.errors) {
-          if (data.errors.errors.password) {
-            setError("password", {
-              type: "custom",
-              message: data.errors.errors.password,
-            });
+        if (data.errors?.username)
+          if (data.errors?.errors) {
+            //handle herrors here
+            if (data.errors.errors?.password) {
+            }
           }
-        }
       } else {
         onRequestClose();
       }
     }
   };
-  const loginDemoUser = async () => {
-    //hacky way of doing this. Only closing modal early beacuse errors show up on form otherwise. it thinks the inputs were touched when i click demo user.
-    // onRequestClose();
-    setValue("credential", "Demo-lition");
-    setValue("password", "password");
 
+  const clearFormData = () => {
+    setFormData({
+      credential: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      firstName: "",
+      lastName: "",
+      username: "",
+    });
+    setFormTouched({});
+    setFormErrors({});
+  };
+
+  const loginDemoUser = async () => {
+    setLoading(true);
     const data = await dispatch(
       thunkSetSession({ credential: "Demo-lition", password: "password" })
     );
+    setLoading(false);
     if (data.errors && data.errors.credential) {
-      setError("login", { type: "custom", message: data.errors.credential });
+      console.log("network err");
     } else {
       onRequestClose();
     }
@@ -173,7 +197,7 @@ export default function LoginModal({
   Modal.setAppElement("#root");
 
   const handleFormType = () => {
-    reset();
+    clearFormData();
     setFormType(formType === "login" ? "signup" : "login");
   };
 
@@ -181,148 +205,181 @@ export default function LoginModal({
     <Modal
       isOpen={isOpen}
       onRequestClose={() => {
-        reset();
+        clearFormData();
         onRequestClose();
       }}
       contentLabel='Login modal'
-      onAfterClose={() => reset()}
     >
       <ModalWrapper>
-        {formType === "login" ? (
-          <form onSubmit={handleSubmit(submitHandler)}>
-            <header>
-              <FontAwesomeIcon icon={faCircleXmark} onClick={onRequestClose} />
-              <h2>Login or sign up</h2>
-            </header>
-            <div className='errors'>
-              {Object.keys(errors).map((err) => {
-                if (errors[err].message) {
-                  return <p className='error'>{errors[err].message}</p>;
+        <form
+          onChange={(e) => {
+            formTouched[e.target.id] = true;
+          }}
+          onSubmit={submitHandler}
+        >
+          <header>
+            <FontAwesomeIcon icon={faCircleXmark} onClick={onRequestClose} />
+            <h2>Login or sign up</h2>
+          </header>
+          <div className='errors'>
+            {Object.keys(formErrors).map((err) => {
+              if (formErrors[err] && formTouched[err])
+                return <p className='error'>{formErrors[err]}</p>;
+            })}
+          </div>
+          {formType === "login" ? (
+            <>
+              <input
+                id='credential'
+                placeholder='username or email'
+                type='text'
+                value={formData.credential}
+                className={`${
+                  formErrors.credential && formTouched.credential && "error"
+                }`}
+                onChange={(e) =>
+                  setFormData({ ...formData, credential: e.target.value })
                 }
-              })}
-              {errors?.login?.message && (
-                <p className='error'>{errors?.login?.message}</p>
-              )}
-              {errors?.credential && (
-                <p className='error'>Credential is required</p>
-              )}
-              {errors?.password && (
-                <p className='error'>Password is required</p>
-              )}
-            </div>
-            <input
-              placeholder='username or email'
-              type='text'
-              className={`${errors.credential && "error"}`}
-              {...register("credential", {
-                required: formType === "login" ? true : false,
-              })}
-            />
-            <input
-              placeholder='password'
-              type='password'
-              className={`${errors.password && "error"}`}
-              {...register("password", { required: true })}
-            />
-            <button type='submit' disabled={loading}>
-              {!loading ? (
-                "Login"
-              ) : (
-                <FontAwesomeIcon icon={faSpinner} className='spinner' />
-              )}
-            </button>
-            <button id='demo-btn' onClick={loginDemoUser} disabled={loading}>
-              {!loading ? (
-                "Demo User"
-              ) : (
-                <FontAwesomeIcon icon={faSpinner} className='spinner' />
-              )}
-            </button>
-            <div className='border'>
-              <div className='item-1'></div>
-              <div className='item-2'>or</div>
-              <div className='item-3'></div>
-            </div>
-            <button onClick={handleFormType}>Signup</button>
-          </form>
-        ) : (
-          <form onSubmit={handleSubmit(submitHandler)}>
-            <header>
-              <FontAwesomeIcon icon={faCircleXmark} onClick={onRequestClose} />
-              <h2>Login or sign up</h2>
-            </header>
-            <div className='errors'>
-              {Object.keys(errors).map((err) => {
-                if (errors[err].message)
-                  return <p className='error'>{errors[err].message}</p>;
-              })}
-            </div>
-            {errors?.username?.message && (
-              <p className='error'>{errors?.username?.message}</p>
-            )}
-            {errors?.password?.message && (
-              <p className='error'>{errors?.password?.message}</p>
-            )}
-            <input
-              placeholder='username'
-              type='text'
-              className={`${errors.username && "error"}`}
-              {...register("username", { required: true })}
-            />
-            <input
-              placeholder='email'
-              type='email'
-              className={`${errors.email && "error"}`}
-              {...register("email", { required: true })}
-            />
-            <input
-              placeholder='password'
-              type='password'
-              className={`${errors.password && "error"}`}
-              {...register("password", { required: true })}
-            />
-            <input
-              placeholder='confirm password'
-              type='password'
-              className={`${errors.confirmPassword && "error"}`}
-              {...register("confirmPassword", {
-                required: true,
-                validate: (val) =>
-                  watch("password") !== val
-                    ? "Your passwords do not match"
-                    : undefined,
-              })}
-            />
-            <input
-              placeholder='first name'
-              type='text'
-              className={`${errors.firstName && "error"}`}
-              {...register("firstName", { required: true })}
-            />
-            <input
-              placeholder='last name'
-              type='text'
-              className={`${errors.lastName && "error"}`}
-              {...register("lastName", { required: true })}
-            />
-            <button
-              type='submit'
-              disabled={
-                loading || Object.keys(formState.touchedFields).length === 0
-              }
-            >
-              Signup
-            </button>
-            <div className='border'>
-              <div className='item-1'></div>
-              <div className='item-2'>or</div>
-              <div className='item-3'></div>
-            </div>
-            <button onClick={handleFormType} disabled={loading}>
-              Login
-            </button>
-          </form>
-        )}
+              />
+              <input
+                id='password'
+                placeholder='password'
+                type='password'
+                value={formData.password}
+                className={`${
+                  formErrors.password && formTouched.password && "error"
+                }`}
+                onChange={(e) =>
+                  setFormData({ ...formData, password: e.target.value })
+                }
+              />
+              <button
+                type='submit'
+                disabled={loading || Object.keys(formErrors).length}
+              >
+                {!loading ? (
+                  "Login"
+                ) : (
+                  <FontAwesomeIcon icon={faSpinner} className='spinner' />
+                )}
+              </button>
+              <button
+                id='demo-btn'
+                onClick={(e) => {
+                  e.preventDefault();
+                  loginDemoUser();
+                }}
+                disabled={loading}
+              >
+                {!loading ? (
+                  "Demo User"
+                ) : (
+                  <FontAwesomeIcon icon={faSpinner} className='spinner' />
+                )}
+              </button>
+              <div className='border'>
+                <div className='item-1'></div>
+                <div className='item-2'>or</div>
+                <div className='item-3'></div>
+              </div>
+              <button onClick={handleFormType}>Signup</button>
+            </>
+          ) : (
+            <>
+              <input
+                id='username'
+                placeholder='username'
+                type='text'
+                value={formData.username}
+                className={`${
+                  formErrors.username && formTouched.username && "error"
+                }`}
+                onChange={(e) =>
+                  setFormData({ ...formData, username: e.target.value })
+                }
+              />
+              <input
+                id='email'
+                placeholder='email'
+                type='email'
+                value={formData.email}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
+                className={`${
+                  formErrors.email && formTouched.email && "error"
+                }`}
+              />
+              <input
+                id='password'
+                placeholder='password'
+                type='password'
+                value={formData.password}
+                className={`${
+                  formErrors.password && formTouched.password && "error"
+                }`}
+                onChange={(e) =>
+                  setFormData({ ...formData, password: e.target.value })
+                }
+              />
+              <input
+                id='confirmPassword'
+                placeholder='confirm password'
+                type='password'
+                value={formData.confirmPassword}
+                className={`${
+                  formErrors.confirmPassword &&
+                  formTouched.confirmPassword &&
+                  "error"
+                }`}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    confirmPassword: e.target.value,
+                  })
+                }
+              />
+              <input
+                id='firstName'
+                placeholder='first name'
+                type='text'
+                value={formData.firstName}
+                className={`${
+                  formErrors.firstName && formTouched.firstName && "error"
+                }`}
+                onChange={(e) =>
+                  setFormData({ ...formData, firstName: e.target.value })
+                }
+              />
+              <input
+                id='lastName'
+                placeholder='last name'
+                type='text'
+                value={formData.lastName}
+                className={`${
+                  formErrors.lastName && formTouched.lastName && "error"
+                }`}
+                onChange={(e) =>
+                  setFormData({ ...formData, lastName: e.target.value })
+                }
+              />
+              <button
+                type='submit'
+                disabled={loading || Object.keys(formErrors).length}
+              >
+                Signup
+              </button>
+              <div className='border'>
+                <div className='item-1'></div>
+                <div className='item-2'>or</div>
+                <div className='item-3'></div>
+              </div>
+              <button onClick={handleFormType} disabled={loading}>
+                Login
+              </button>
+            </>
+          )}
+        </form>
       </ModalWrapper>
     </Modal>
   );

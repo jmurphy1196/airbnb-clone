@@ -25,7 +25,8 @@ export const thunkSetSession =
       dispatch(setSession(data));
       return data;
     } catch (err) {
-      return await err.json();
+      console.log("there was an err", err);
+      if (err.json) return await err.json();
     }
   };
 
@@ -64,8 +65,8 @@ export const thunkCreateUser =
 
       return data;
     } catch (err) {
-      const errJSON = await err.json();
-      return errJSON;
+      console.log("there was an error", err);
+      if (err.json) return await err.json();
     }
   };
 
