@@ -98,7 +98,7 @@ export const thunkEditSpot = (spotData) => async (dispatch) => {
     });
     const data = await res.json();
     console.log("this is the data , ", data);
-    dispatch(editSpot(data));
+    dispatch(editSpot({ ...data, avgRating: spotData.avgRating || 0 }));
     return data;
   } catch (err) {
     console.log("there was an error", err);

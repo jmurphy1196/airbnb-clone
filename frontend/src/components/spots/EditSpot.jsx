@@ -63,6 +63,7 @@ export default function EditSpot() {
         price: data.price,
         description: data.description,
         name: data.name,
+        avgRating: data.avgStarRating || 0,
       });
       setImages(data.SpotImages.sort((a, b) => b.preview - a.preview));
     })();
