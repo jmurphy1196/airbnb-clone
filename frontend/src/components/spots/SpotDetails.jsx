@@ -47,12 +47,15 @@ export default function SpotDetails() {
     if (spotImagesLoaded) {
       const tl = gsap.timeline();
 
-      imgRefArray.current.forEach((cardRef, index) => {
+      imgRefArray.current.forEach((cardRef, idx) => {
         const card = cardRef;
-        tl.from(card, { opacity: 0, y: 50, duration: 0.3 }, index * 0.2).to(
-          card,
-          { opacity: 1, y: 0, duration: 0.3 }
-        );
+        let options = {};
+        if (idx === 0) options.y = 50;
+        else if (idx === 1) options.y = -50;
+        else if (idx === 2) options.x = 50;
+        else if (idx === 3) options.y = 50;
+        else if (idx === 4) options.x = 50;
+        tl.from(card, { opacity: 0, ...options, duration: 0.8 }, idx * 0.2);
       });
     }
   }, [spotImagesLoaded]);
