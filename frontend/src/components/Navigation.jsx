@@ -95,6 +95,7 @@ const NavbarContainer = styled.nav`
     display: flex;
     flex-direction: column;
     align-items: center;
+    z-index: 1000;
   }
   .sub-menu p {
     margin-right: auto;
@@ -133,7 +134,6 @@ const NavbarContainer = styled.nav`
 `;
 
 export default function Navigation() {
-  const { pathname } = useLocation();
   const theme = useTheme();
   const user = useSelector((state) => state.session.user);
   const history = useHistory();
@@ -144,14 +144,9 @@ export default function Navigation() {
     type: "login",
   });
   const btnRef = useRef(null);
-  const subRef = useRef(null);
   useEffect(() => {
     function handleClickOutside(event) {
-      if (
-        btnRef.current &&
-        btnRef.current.contains(subRef.current) &&
-        event.target.contains(subRef.current)
-      ) {
+      if (btnRef.current && !btnRef.current.contains(event.target)) {
         if (submenuActive) setSubmenuActive(false);
       }
     }
@@ -160,9 +155,6 @@ export default function Navigation() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [btnRef, submenuActive, setSubmenuActive]);
-  useEffect(() => {
-    setSubmenuActive(false);
-  }, [pathname]);
   const handleSignout = async () => {
     const res = await dispatch(thunkRemoveSession());
     history.push("/");
@@ -178,21 +170,22 @@ export default function Navigation() {
           <h1>airbnb</h1>
         </Link>
       </div>
-      <div className='menu' ref={btnRef}>
-        {user && (
+      <div
+        className='menu'
+        ref={btnRef}
+        onClick={() => setSubmenuActive(!submenuActive)}
+      >
+        {/* {user && (
           <Link to='/spots/new' id='create-spot-link'>
             Create a new spot
           </Link>
-        )}
-        <button
-          className={`menu-btn ${submenuActive && "sub-active"}`}
-          onClick={() => setSubmenuActive(!submenuActive)}
-        >
+        )} */}
+        <button className={`menu-btn ${submenuActive && "sub-active"}`}>
           <FontAwesomeIcon icon={faBars} color={theme.text} />
           <FontAwesomeIcon icon={faUserCircle} color={theme.text} />
         </button>
         {submenuActive && (
-          <div className='sub-menu' ref={subRef}>
+          <div className='sub-menu'>
             {user?.firstName && <p>Hello, {user.firstName}</p>}
             <ul>
               {!user && (

@@ -18,6 +18,10 @@ export const SpotDetailsWrapper = styled.div`
   @media ${device.desktop} {
     padding: 0 100px;
   }
+  .images {
+    overflow: hidden;
+    z-index: -99 !important;
+  }
   .spot-images {
     display: grid;
     grid-template-columns: repeat(4, minmax(180px, 1fr));
@@ -43,6 +47,7 @@ export const SpotDetailsWrapper = styled.div`
     border-radius: 16px;
     border: 1px solid ${({ theme }) => theme.toggleBorder};
     opacity: 0;
+    z-index: -99;
   }
   .main-image {
     grid-column-start: 1;

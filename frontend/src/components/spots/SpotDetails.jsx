@@ -51,7 +51,7 @@ export default function SpotDetails() {
         const card = cardRef;
         tl.from(card, { opacity: 0, y: 50, duration: 0.3 }, index * 0.2).to(
           card,
-          { opacity: 1, y: 0, duration: 0.2 }
+          { opacity: 1, y: 0, duration: 0.3 }
         );
       });
     }
