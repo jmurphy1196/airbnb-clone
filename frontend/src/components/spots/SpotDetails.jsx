@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { SpotDetailsWrapper } from "./SpotDetailsWrapper";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 import { useSelector, useDispatch } from "react-redux";
@@ -10,6 +10,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
 import ReviewList from "../reviews/ReviewList";
 import ReviewModal from "../reviews/ReviewModal";
+import gsap from "gsap";
 
 export default function SpotDetails() {
   const dispatch = useDispatch();
@@ -23,7 +24,14 @@ export default function SpotDetails() {
   const spotImageOrder = useSelector((state) =>
     state.singleSpot.spotImages.sort((a, b) => b.preview - a.preview)
   );
+  const [spotImagesLoaded, setSpotImagesLoaded] = useState(false);
   const reviews = useSelector((state) => state.singleSpot.Reviews || []);
+  const imgRefArray = useRef([]);
+  console.log(spotImagesLoaded);
+
+  const updateImgRefArray = (idx, ref) => {
+    imgRefArray.current[idx] = ref;
+  };
 
   //replace w/ loading screen
 
@@ -34,6 +42,28 @@ export default function SpotDetails() {
       setLoadingReviews(false);
     })();
   }, [dispatch]);
+
+  useEffect(() => {
+    if (spotImagesLoaded) {
+      const tl = gsap.timeline();
+
+      imgRefArray.current.forEach((cardRef, index) => {
+        const card = cardRef;
+        tl.from(card, { opacity: 0, y: 50, duration: 0.3 }, index * 0.2).to(
+          card,
+          { opacity: 1, y: 0, duration: 0.2 }
+        );
+      });
+    }
+  }, [spotImagesLoaded]);
+
+  const handleImagesLoaded = () => {
+    const images = document.querySelectorAll(".image > img");
+    const imageLoadedCount = Array.from(images).filter(
+      (img) => img.complete
+    ).length;
+    if (imageLoadedCount === 5) setSpotImagesLoaded(true);
+  };
   if (!spot) return null;
   return (
     <SpotDetailsWrapper>
@@ -45,11 +75,21 @@ export default function SpotDetails() {
       </header>
       <div className='spot-images'>
         <div className='image main-image'>
-          <img src={spotImageOrder[0]?.url || "/stock-house.png"} alt='' />
+          <img
+            ref={(ref) => updateImgRefArray(0, ref)}
+            src={spotImageOrder[0]?.url || "/stock-house.png"}
+            alt=''
+            onLoad={handleImagesLoaded}
+          />
         </div>
         {[1, 2, 3, 4].map((val) => (
           <div key={val} className='image sub-image'>
-            <img src={spotImageOrder[val]?.url || "/stock-house.png"} alt='' />
+            <img
+              ref={(ref) => updateImgRefArray(val, ref)}
+              src={spotImageOrder[val]?.url || "/stock-house.png"}
+              alt=''
+              onLoad={handleImagesLoaded}
+            />
           </div>
         ))}
       </div>

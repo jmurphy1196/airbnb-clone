@@ -42,6 +42,7 @@ export const SpotDetailsWrapper = styled.div`
   img {
     border-radius: 16px;
     border: 1px solid ${({ theme }) => theme.toggleBorder};
+    opacity: 0;
   }
   .main-image {
     grid-column-start: 1;
