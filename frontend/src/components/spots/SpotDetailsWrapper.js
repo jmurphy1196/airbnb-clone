@@ -47,6 +47,7 @@ export const SpotDetailsWrapper = styled.div`
     border-radius: 16px;
     border: 1px solid ${({ theme }) => theme.toggleBorder};
     z-index: -99;
+    display: none;
   }
   .main-image {
     grid-column-start: 1;

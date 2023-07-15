@@ -49,6 +49,8 @@ export default function SpotDetails() {
 
       imgRefArray.current.forEach((cardRef, idx) => {
         const card = cardRef;
+        gsap.set(card, { display: "block" });
+        console.log("this is the card, ", card);
         let options = {};
         if (idx === 0) options.y = 50;
         else if (idx === 1) options.y = -50;
