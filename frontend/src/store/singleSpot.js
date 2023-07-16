@@ -178,6 +178,11 @@ export const singleSpotReducer = (state = initalState, action) => {
         newState.Reviews = [action.payload];
       }
       newState.reviewCount !== null ? (newState.reviewCount += 1) : 1;
+      let totalRating = 0;
+      for (let review of newState.Reviews) {
+        totalRating += Number(review.stars);
+      }
+      newState.avgStarRating = totalRating / newState.reviewCount;
       return newState;
     }
     case actionTypes.REMOVE_REVIEW: {
@@ -187,6 +192,11 @@ export const singleSpotReducer = (state = initalState, action) => {
         newState.Reviews = newState.Reviews.filter(
           (rev) => rev.id !== action.payload
         );
+        let totalRating = 0;
+        for (let review of newState.Reviews) {
+          totalRating += Number(review.stars);
+        }
+        newState.avgStarRating = totalRating / newState.reviewCount;
       }
       return newState;
     }

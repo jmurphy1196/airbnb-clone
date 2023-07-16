@@ -111,7 +111,6 @@ export const SpotCard = ({ spot, isEdit, setIsOpen, setActiveSpotId }) => {
   useEffect(() => {
     const card = cardRef.current;
     if (!isInView) {
-      console.log("this is running");
       gsap.set(card, { opacity: 0 });
 
       ScrollTrigger.create({
