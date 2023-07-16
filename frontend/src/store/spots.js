@@ -53,7 +53,9 @@ export const thunkGetSpots =
   (paginationData = null) =>
   async (dispatch) => {
     try {
-      const res = await csrfFetch("/api/spots");
+      const res = await csrfFetch(
+        `/api/spots?size=${paginationData.size}&page=${paginationData.page}`
+      );
       const data = await res.json();
       dispatch(getSpots(data));
       return data;
