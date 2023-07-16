@@ -1,5 +1,5 @@
 import { styled } from "styled-components";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
 import { Tooltip } from "react-tooltip";
@@ -73,6 +73,7 @@ const SpotCardWrapper = styled.div`
 export const SpotCard = ({ spot, isEdit, setIsOpen, setActiveSpotId }) => {
   const cardRef = useRef(null);
   const history = useHistory();
+  const [isInView, setIsInView] = useState(true);
   const handleDelete = () => {
     setActiveSpotId(spot.id);
     setIsOpen(true);
@@ -82,15 +83,47 @@ export const SpotCard = ({ spot, isEdit, setIsOpen, setActiveSpotId }) => {
   };
   useEffect(() => {
     const card = cardRef.current;
-    gsap.set(card, { opacity: 0 });
 
-    ScrollTrigger.create({
-      trigger: card,
-      start: "top 90%",
-      onEnter: () =>
-        gsap.to(card, { opacity: 1, duration: 0.8, ease: "power2.inOut" }),
-    });
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) setIsInView(false);
+        });
+      },
+      {
+        root: null,
+        rootMargin: "0px",
+        threshold: 0.3,
+      }
+    );
+
+    if (card) {
+      observer.observe(card);
+    }
+
+    return () => {
+      if (card) {
+        observer.unobserve(card);
+      }
+    };
   }, []);
+
+  useEffect(() => {
+    const card = cardRef.current;
+    if (!isInView) {
+      console.log("this is running");
+      gsap.set(card, { opacity: 0 });
+
+      ScrollTrigger.create({
+        trigger: card,
+        start: "top bottom",
+        once: true,
+        onEnter: () =>
+          gsap.to(card, { opacity: 1, duration: 0.8, ease: "power2.inOut" }),
+      });
+    }
+  }, [isInView]);
+
   return (
     <SpotCardWrapper
       data-tooltip-id={spot.id}
