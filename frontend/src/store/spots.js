@@ -53,6 +53,7 @@ export const thunkGetSpots =
   (paginationData = null) =>
   async (dispatch) => {
     try {
+      console.log("this is the pagination data", paginationData);
       const res = await csrfFetch(
         `/api/spots?size=${paginationData.size}&page=${paginationData.page}`
       );
@@ -75,6 +76,8 @@ export const spotsReducer = (state = initalState, action) => {
       }
       if (!newState.orderedSpots.length) {
         newState.orderedSpots = [...Spots];
+      } else {
+        newState.orderedSpots = Object.values(newState.allSpots);
       }
       return newState;
     }
