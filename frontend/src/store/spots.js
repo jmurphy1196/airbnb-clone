@@ -32,7 +32,6 @@ export const thunkRemoveUserSpot = (spotId) => async (dispatch) => {
     dispatch(removeUserSpot(spotId));
     return data;
   } catch (err) {
-    console.log("there was an error", err);
     if (err.json) return await err.json();
   }
 };
