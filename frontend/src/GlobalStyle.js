@@ -63,14 +63,18 @@ export const Globalstyle = createGlobalStyle`
     border-radius: 16px !important;
   @media ${device.mobile}  {
     width: 300px; 
+    height: fit-content;
   }
   @media ${device.tablet}  {
     width: 400px; 
+    height: fit-content;
   }
   @media ${device.laptop}  {
     width: 500px; 
+    height: fit-content;
   }
   @media ${device.desktop}  {
+    height: fit-content;
     width: 550px; 
   }
   }
