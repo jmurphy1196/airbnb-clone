@@ -104,10 +104,7 @@ describe("User session", () => {
       .send({
         firstName: "John",
         lastName: "Smith",
-        email:
-          [...Array(10)]
-            .map(() => ((Math.random() * 36) | 0).toString(36))
-            .join("") + "@test.com",
+        email: "tester123@123.com",
         username: randUserName(),
         password: randPassword(),
       })
