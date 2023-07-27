@@ -7,6 +7,7 @@ const { randPassword, randUserName } = require("@ngneat/falso");
 chai.use(chaiHttp);
 
 describe("User session", () => {
+  console.log("RUNNING TESTS");
   let csrfToken;
   const agent = chai.request.agent(app); // Use the same agent for all requests
 
