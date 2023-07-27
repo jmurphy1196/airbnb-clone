@@ -7,6 +7,13 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      DB_FILE_TEST: db/test.db
+      SCHEMA: MY_CUSTOM_SCHEMA
+      PORT: 8000
+      JWT_EXPIRES_IN: 604800
+      JWT_SECRET: jIZQBvnyeypXbA==
+      NODE_ENV: test
 
     steps:
       - uses: actions/checkout@v2
