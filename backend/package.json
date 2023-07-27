@@ -40,6 +40,7 @@
     "multer-s3": "^3.0.1",
     "per-env": "^1.0.2",
     "pg": "^8.11.0",
+    "rimraf": "^5.0.1",
     "sequelize": "^6.32.0",
     "sequelize-cli": "^6.6.1"
   },
