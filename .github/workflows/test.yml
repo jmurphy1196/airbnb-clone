@@ -14,8 +14,8 @@ jobs:
       JWT_EXPIRES_IN: 604800
       JWT_SECRET: jIZQBvnyeypXbA==
       NODE_ENV: test
-      API_KEY: test
-      APP_ID: test
+      API_KEY: F1Zd1SkWKsrEbHdi40gcVtDC2Xc6rwbno2QpKqdUkLw
+      APP_ID: 8O0xCwiRXYxPqv1l7qTH
     steps:
       - uses: actions/checkout@v2
 
