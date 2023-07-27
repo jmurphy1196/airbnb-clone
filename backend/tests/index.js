@@ -2,6 +2,7 @@ const chai = require("chai");
 const chaiHttp = require("chai-http");
 const app = require("../app"); // path to your Express app
 const expect = chai.expect;
+const { randPassword, randUserName } = require("@ngneat/falso");
 
 chai.use(chaiHttp);
 
@@ -71,6 +72,48 @@ describe("User session", () => {
         expect(res.body).to.have.property("title");
         expect(res.body).to.have.property("errors");
         expect(res.statusCode).to.equal(401);
+        done();
+      });
+  });
+  it("should return the current user that is logged in", (done) => {
+    agent
+      .post("/api/session")
+      .set("XSRF-TOKEN", csrfToken)
+      .send({
+        credential: "Demo-lition",
+        password: "password",
+      })
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        agent.get("/api/session").end((err, res) => {
+          expect(res.body).to.have.property("user");
+          expect(res.body.user).to.have.property("id");
+          expect(res.body.user).to.have.property("firstName");
+          expect(res.body.user).to.have.property("lastName");
+          expect(res.body.user).to.have.property("email");
+          expect(res.body.user).to.have.property("username");
+          expect(res.body.user.username).to.equal("Demo-lition");
+          done();
+        });
+      });
+  });
+  it("should create a new user with valid data", (done) => {
+    agent
+      .post("/api/users")
+      .set("XSRF-TOKEN", csrfToken)
+      .send({
+        firstName: "John",
+        lastName: "Smith",
+        email:
+          [...Array(10)]
+            .map(() => ((Math.random() * 36) | 0).toString(36))
+            .join("") + "@test.com",
+        username: randUserName(),
+        password: randPassword(),
+      })
+      .end((err, res) => {
+        expect(res.body).to.have.property("user");
+        expect(res.statusCode).to.equal(201);
         done();
       });
   });
