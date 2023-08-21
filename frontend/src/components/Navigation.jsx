@@ -163,11 +163,7 @@ export default function Navigation() {
     <NavbarContainer>
       <div className='brand'>
         <Link to='/'>
-          <img
-            src='https://companieslogo.com/img/orig/ABNB-4aaade0f.png?t=1633511992'
-            alt='airbnb logo'
-          />
-          <h1>airbnb</h1>
+          <h1>airbzb</h1>
         </Link>
       </div>
       <div
@@ -229,7 +225,7 @@ export default function Navigation() {
                   </Link>
                   <Link to='/spots/new'>
                     <li>
-                      <span>Airbnb your home</span>
+                      <span>Airbzb your home</span>
                     </li>
                   </Link>
                 </>
